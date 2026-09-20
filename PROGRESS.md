@@ -10,9 +10,9 @@
 
 | Campo | Valor |
 |---|---|
-| Fase atual | **0 — Fundações** (em curso) |
-| Build | Não há ainda projeto Android criado (sem `app/`, sem Gradle) |
-| Prioridade imediata | Criar o scaffold no Android Studio e montar os 5 ecrãs vazios navegáveis + tema claro/escuro + strings PT-PT |
+| Fase atual | **0 — Fundações** (concluída — falta commit/merge) |
+| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ |
+| Prioridade imediata | Commit da Fase 0 em branch própria e merge para `main` |
 | Branch ativa | `main` |
 
 ## 2. Fases do roadmap
@@ -21,7 +21,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 | Fase | Objetivo | Estado | Pronto quando |
 |---|---|---|---|
-| **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | 🔶 em curso | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
+| **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | 🔵 concluída | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
 | **1 — Tarefas** | CRUD, Hoje básico, adiar, undo, estados vazios | ⚪ não iniciada | Consigo gerir um dia inteiro só com tarefas |
 | **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada + lista e calendário | ⚪ não iniciada | Aniversário anual e consulta a 3 meses funcionam |
 | **3 — Lembretes e alarmes** | AlarmManager, notificações com ações, permissões, boot receiver | ⚪ não iniciada | Alarme toca; sobrevive a reinício |
@@ -47,18 +47,32 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 - `check_structure.py` (skill `app-code-organizer`) — diagnóstico automático de organização do código.
 - `PROGRESS.md` — este ficheiro.
 
-**Código da app (nada criado ainda)** — não existe `app/`, nem Gradle, nem código Kotlin na app.
+**Código da app (Fase 0 em curso)**
+- Scaffold Android criado no Android Studio e integrado: repositório movido para a raiz (`gradle/`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `app/`).
+- Package renomeado `com.example.dailycompany` → `com.dailycompany`; `minSdk` 26.
+- Version catalog atualizado: Hilt + KSP, DataStore Preferences, Navigation Compose, `lifecycle-viewmodel-compose`, `core-splashscreen`, `material-icons-extended`.
+- Tema: `Color.kt` (tokens de DESIGN.md, claro/escuro), `Dimens.kt` (`Spacing`, `AppShapes`), `Type.kt` (pesos/tamanhos de DESIGN.md, fontes do sistema por agora), `Theme.kt` (`DailyCompanyTheme` com `ThemeMode`, locale, `AppStrings`).
+- Línguas: `AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings` (completas nas três línguas).
+- `SettingsRepository` + `StringsProvider` (DataStore), `AppSettingsViewModel` com splash até a 1.ª leitura.
+- `DailyApp` (`@HiltAndroidApp`), splash (temas XML claro/escuro + `ic_splash_icon`).
+- Navegação: `DailyCompanyApp` com `NavigationBar` de 5 destinos + `NavHost`; 5 ecrãs vazios (`today`, `tasks`, `events`, `wardrobe`, `outfits`) com `EmptyState`.
+- `.gitignore` da raiz (gradle, `.kotlin/`, keys, APKs).
 
-## 4. Próximo passo (bloqueado no utilizador)
+**Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
 
-1. Criar o projeto Android no Android Studio (ver instruções na resposta do agente) — gera `app/`, `gradle/`, `gradlew`, version catalog.
-2. O agente completa o scaffold: tokens do tema, línguas (PT-PT + pt-BR + EN a partir de `exemplos/`), navegação, 5 ecrãs em branco, Room vazio, Hilt, strings PT-PT, `.gitignore` Android.
-3. Verificação: `./gradlew :app:assembleDebug` + commit na branch (ex. `feat/fase-0-fundacoes`).
+## 4. Próximo passo (Fase 1 — Tarefas)
+
+1. Commit da Fase 0 em branch `feat/fase-0-fundacoes` e merge para `main`.
+2. Fase 1: domínio `Task` puro + testes, Room (`TaskEntity`/`TaskDao`), CRUD, `TaskViewModel`, ecrã `tasks` com separadores Hoje/Próximas/Sem data/Concluídas, adiar, undo (Snackbar).
+3. Verificação: `:app:assembleDebug` + `:app:testDebugUnitTest` + teste em dispositivo.
 
 ## 5. Decisões tomadas recentemente
 
 | Data | Decisão |
 |---|---|
+| 2026-09-20 | Scaffold Android integrado na raiz; package `com.dailycompany`; `minSdk` 26. |
+| 2026-09-20 | Stack base aprovada pelo utilizador: Hilt+KSP, DataStore, Navigation, splash, `material-icons-extended`. |
+| 2026-09-20 | Fontes Outfit/Inter adiadas para a fase visual; usa-se a do sistema com os mesmos pesos. |
 | 2026-09-20 | Criado `PROGRESS.md` e skill `project-progress-tracker` para registo obrigatório de progresso. |
 | 2026-09-20 | Skills `project-folder-organizer` e `app-code-organizer` adicionadas; `check_structure.py` movido para a skill. |
 | 2026-09-20 | Criação do `AGENTS.md` com a regra de carregar `kotlin-compose-android` em qualquer tarefa de código. |
@@ -67,6 +81,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 | Data | O que mudou |
 |---|---|
+| 2026-09-20 | Fase 0 validada em dispositivo pelo utilizador (splash, tema claro/escuro, 5 ecrãs navegáveis). Fase 0 concluída; falta commit/merge. |
+| 2026-09-20 | Fase 0: scaffold movido para a raiz, package `com.dailycompany`, Hilt/DataStore/Navigation/splash adicionados, tema claro/escuro com tokens do DESIGN.md, 3 línguas completas, navegação com 5 ecrãs vazios. Build + testes + lint verdes. |
 | 2026-09-20 | Fase 0 iniciada: documentação completa, skills prontas, `exemplos/` criado. Sem código Android ainda. |
 
 ---
