@@ -1,0 +1,23 @@
+<!--
+  Excerto — cola dentro do <application> do AndroidManifest.xml já existente.
+  O essencial: a Activity de arranque usa Theme.App.Starting, não Theme.App
+  diretamente. É a biblioteca core-splashscreen que faz a transição para
+  postSplashScreenTheme sozinha.
+-->
+<application
+    android:name=".DailyApp"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:theme="@style/Theme.App">
+
+    <activity
+        android:name=".MainActivity"
+        android:exported="true"
+        android:theme="@style/Theme.App.Starting">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+</application>

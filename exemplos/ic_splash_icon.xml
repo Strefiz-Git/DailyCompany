@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ícone do splash: o mesmo motivo do ícone da app (cabide sob um sol), simplificado
+  a uma só cor, dentro do círculo seguro de 192x192 que o SplashScreen API exige
+  (só o miolo central de um mipmap adaptativo costuma caber bem; por isso este
+  vetor é desenhado já dentro dessas margens, não é o ic_launcher reaproveitado).
+  Cor fixa (não token do tema): tem de existir antes do Compose arrancar.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192"
+    android:tint="#8F4B2A">
+
+    <!-- Sol: arco simples por trás do cabide -->
+    <path
+        android:pathData="M96,40 m-28,0 a28,28 0 1,1 56,0 a28,28 0 1,1 -56,0"
+        android:strokeColor="#8F4B2A"
+        android:strokeWidth="6"
+        android:fillColor="#00000000" />
+
+    <!-- Cabide -->
+    <path
+        android:pathData="M96,58 L96,70"
+        android:strokeColor="#8F4B2A"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M96,70 C96,70 60,88 40,120 C34,130 42,138 54,134 L96,116 L138,134 C150,138 158,130 152,120 C132,88 96,70 96,70 Z"
+        android:strokeColor="#8F4B2A"
+        android:strokeWidth="7"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

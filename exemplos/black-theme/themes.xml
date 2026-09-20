@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Versão escura do splash. O sistema escolhe este ficheiro automaticamente com base
+      no tema do SISTEMA (Android), não na preferência guardada na app — o splash acontece
+      antes de o DataStore ser lido, por isso não há como respeitar "Tema: Escuro" escolhido
+      dentro da app nesta fase. É a única inconsistência aceite: dura < 1 segundo e o ecrã
+      seguinte já usa DailyCompanyTheme com a preferência real.
+    -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1A120E</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_icon</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="postSplashScreenTheme">@style/Theme.App</item>
+    </style>
+
+    <style name="Theme.App" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#1A120E</item>
+    </style>
+</resources>

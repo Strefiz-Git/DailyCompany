@@ -287,6 +287,16 @@ fun DailyCompanyTheme(
 
 > A versão final e completa deste ficheiro — já com `ThemeMode`, língua e override de `Locale` — está em `starter/ui/theme/Theme.kt`. O bloco acima é a base de cor; usa o ficheiro do starter.
 
+## 5.1 Splash screen
+
+Usa a **SplashScreen API** (`androidx.core:core-splashscreen`), não um ecrã Compose fingido — arranca mais depressa e é o comportamento nativo do Android 12+.
+
+- **Fundo:** cor sólida (papel quente `#FFF8F5` no claro, carvão `#1A120E` no escuro) — nunca uma imagem ou gradiente, para não conflituar com a moldura que o sistema desenha à volta do ícone.
+- **Ícone:** o motivo do ícone da app (cabide sob um sol) a uma só cor, dentro do círculo seguro de 192×192 dp que a API exige. Sem animação de entrada personalizada; usa-se o crossfade por omissão do sistema.
+- **Claro/escuro no splash:** é resolvido por `values-night/themes.xml`, ou seja, segue o **tema do sistema operativo**, não a preferência guardada na app — o splash acontece antes de o DataStore ser lido, por isso não há como ser diferente. É a única inconsistência aceite; dura menos de um segundo.
+- **Duração:** o splash fica visível até a primeira leitura das definições (tema, língua) chegar do DataStore, para o primeiro frame da app já nascer com o tema certo, sem "flash" de claro→escuro. Ver `MainActivity.kt` (`splashScreen.setKeepOnScreenCondition`).
+- Isto é a **única** parte da app com um tema em XML (`res/values/themes.xml`) e cores fixas fora de `Color.kt` — é inevitável, o sistema desenha isto antes de qualquer Kotlin correr.
+
 ## 6. Ícones e ilustração
 
 - `Icons.Rounded.*` (cantos arredondados combinam com as formas). Evitar `material-icons-extended` inteiro.

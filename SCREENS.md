@@ -5,6 +5,10 @@
 
 ---
 
+## 0. Arranque (splash screen)
+
+Antes de qualquer ecrã: **SplashScreen do sistema** (Android 12+, via `core-splashscreen`), fundo sólido + ícone da app, sem texto. Fica visível até as definições (tema, língua) carregarem do DataStore, evitando um flash do tema errado no primeiro frame. Não é uma rota do NavHost — acontece antes de `setContent`. Detalhe visual em `DESIGN.md` §5.1.
+
 ## 1. Mapa de navegação
 
 ```
