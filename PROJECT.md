@@ -139,8 +139,8 @@ Ecrã inicial. Secções, por ordem:
 **Guarda-roupa:** gerir categorias. **Dados:** exportar/importar. **Sobre:** versão e licenças.
 
 ### 8.8 Backup
-Enquanto não houver sincronização na nuvem, o backup é a forma de **mudar de telemóvel**: exportação de **tudo** (dados + fotos) num ficheiro `.zip` que o utilizador escolhe onde guardar, e importação com estratégia **Juntar** (por omissão) ou **Substituir tudo**.
-Formato: `manifest.json` (app, versão do esquema, contagens) + `data.json` (entidades ligadas por `uid`) + `images/`. O picker é do sistema (SAF), por isso não é preciso nenhuma permissão de armazenamento. A importação valida tudo antes de escrever, corre numa transação, e no fim recalcula todos os alarmes. Detalhe na skill `android-backup-restore`.
+Enquanto não houver sincronização na nuvem, o backup é a forma de **mudar de telemóvel e ficar tudo igual**: um único ficheiro `.zip` com **absolutamente tudo** — guarda-roupa, outfits, tarefas, eventos, lembretes, histórico de uso, **e também as definições** (tema, língua, preferências de outfit) — mais as fotos. Não há backup parcial nem um ficheiro separado só de fotos: é tudo junto, sempre.
+Formato: `manifest.json` (app, versão do esquema, contagens) + `data.json` (`BackupData`: entidades ligadas por `uid` + `BackupSettings`: tema/língua/preferências) + `images/`. O picker é do sistema (SAF), por isso não é preciso nenhuma permissão de armazenamento. A importação valida tudo antes de escrever, corre numa transação para os dados, aplica sempre as definições, e no fim recalcula todos os alarmes. Ao abrir o ficheiro num telemóvel novo, a app fica com o mesmo aspeto (tema, língua) e o mesmo conteúdo do telemóvel antigo. Detalhe na skill `android-backup-restore`.
 
 ## 9. Regras de negócio que não podem falhar
 
@@ -158,6 +158,7 @@ Formato: `manifest.json` (app, versão do esquema, contagens) + `data.json` (ent
 | R10 | Nenhum texto visível escrito à mão num ecrã: tudo passa por `AppStrings`, nas três línguas. |
 | R11 | Mudar de língua ou de tema aplica-se de imediato e sobrevive a fechar a app. |
 | R12 | Uma importação só é dada como concluída depois de os alarmes serem recalculados. |
+| R13 | O backup nunca é só as fotos: dados de domínio e definições da app viajam sempre juntos no mesmo ficheiro. |
 
 ## 10. Modelo de dados (visão geral)
 
@@ -226,7 +227,7 @@ Uma funcionalidade só está feita quando: compila · tem testes da lógica pura
 
 Kotlin + Compose + M3 · offline total · Room + DataStore · Hilt · sugestões por regras · fotos em armazenamento privado (BD guarda só o nome do ficheiro) · código em inglês · `minSdk 26` · git com commits descritivos e branches para mudanças grandes.
 **Línguas em objetos Kotlin** (`AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings`) em vez de `strings.xml`: troca-se o lint do Android por segurança de compilação (falta uma chave = não compila) e troca instantânea de língua. **Tema claro/escuro** com `ThemeMode` guardado em DataStore.
-**Backup em `.zip` com fotos**, por SAF, sem permissões, como substituto da nuvem.
+**Backup completo em `.zip`** (dados de domínio + definições da app + fotos, tudo junto), por SAF, sem permissões, como substituto da nuvem para trocar de telemóvel.
 
 ## 16. Decisões em aberto
 

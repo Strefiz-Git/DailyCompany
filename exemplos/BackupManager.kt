@@ -18,16 +18,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /*
+ * Um backup = O TELEMÓVEL INTEIRO, não só as fotos. Objetivo: abrir o .zip num telemóvel
+ * novo e ficar exatamente como estava no antigo — dados E preferências.
+ *
  * Formato do ficheiro (.zip):
  *   manifest.json      -> app, schemaVersion, appVersion, createdAt, contagens
- *   data.json          -> BackupData (todas as entidades, ligadas por uid)
- *   images/<uuid>.jpg  -> fotos originais e miniaturas referidas em data.json
+ *   data.json          -> BackupData: TODAS as entidades (categorias, peças, outfits,
+ *                         tarefas, eventos, lembretes, histórico de uso) ligadas por uid,
+ *                         MAIS as definições da app (BackupSettings: tema, língua, etc.)
+ *   images/<uuid>.jpg  -> fotos das peças, referidas por data.json
+ *
+ * As fotos são só mais uma pasta dentro do mesmo ficheiro — nunca um backup à parte.
  *
  * Regras:
  *  - As referências entre entidades usam uid (UUID), nunca ids auto-incrementados.
  *  - Validar tudo antes de escrever seja o que for na base de dados.
  *  - Importação transacional: ou entra tudo, ou não entra nada.
  *  - Proteção contra Zip Slip nos nomes das entradas.
+ *  - Nada fica de fora: se um novo tipo de dado ou definição for acrescentado à app,
+ *    entra em BackupData/BackupSettings no mesmo commit (ver checklist da skill
+ *    android-backup-restore).
  */
 
 const val BACKUP_SCHEMA_VERSION = 1
@@ -54,6 +64,27 @@ data class BackupData(
     val events: List<BackupEvent> = emptyList(),
     val reminders: List<BackupReminder> = emptyList(),
     @SerialName("wear_logs") val wearLogs: List<BackupWearLog> = emptyList(),
+    /** Preferências da app (tema, língua, etc.) — sem isto o telemóvel novo fica com dados mas sem "cara". */
+    val settings: BackupSettings = BackupSettings(),
+)
+
+/**
+ * Espelho de AppSettings (ui/theme + data/settings) em formato serializável e estável.
+ * Nunca serializar AppSettings/ThemeMode/AppLanguage diretamente: se esses enums mudarem
+ * de nome no código, ficheiros antigos deixam de importar. Aqui usam-se Strings fixas.
+ */
+@Serializable
+data class BackupSettings(
+    @SerialName("theme_mode") val themeMode: String = "SYSTEM",          // LIGHT | DARK | SYSTEM
+    val language: String? = null,                                        // tag BCP-47, ou null = segue o sistema
+    @SerialName("follow_system_language") val followSystemLanguage: Boolean = true,
+    @SerialName("dynamic_color") val dynamicColor: Boolean = false,
+    @SerialName("daily_brief_time") val dailyBriefTimeMinutes: Int? = null, // minutos desde a meia-noite
+    @SerialName("first_day_of_week") val firstDayOfWeek: String = "MONDAY",
+    @SerialName("avoid_repeat_days") val avoidRepeatDays: Int = 4,
+    @SerialName("include_outerwear") val includeOuterwear: String = "AUTO", // AUTO | ALWAYS | NEVER
+    @SerialName("weather_city") val weatherCity: String? = null,
+    @SerialName("weather_enabled") val weatherEnabled: Boolean = false,
 )
 
 @Serializable data class BackupCategory(
@@ -121,18 +152,33 @@ sealed interface BackupResult {
     data class Failure(val error: Error, val cause: Throwable? = null) : BackupResult
 }
 
-/** Implementado na camada de dados: lê e escreve a base de dados. */
+/**
+ * Implementado na camada de dados: lê e escreve a base de dados (Room).
+ * NÃO lida com as definições — essas são responsabilidade do SettingsRepository,
+ * chamado diretamente pelo BackupManager (ver export/import abaixo).
+ */
 interface BackupRepository {
+    /** Lê categorias, peças, outfits, tarefas, eventos, lembretes e histórico de uso. Não preenche `settings`. */
     suspend fun exportData(): BackupData
-    /** Tem de correr dentro de UMA transação Room. Devolve as contagens efetivamente escritas. */
+    /** Tem de correr dentro de UMA transação Room. Devolve as contagens efetivamente escritas. Ignora `settings`. */
     suspend fun importData(data: BackupData, strategy: ImportStrategy): BackupResult.Success
     suspend fun clearAll()
+}
+
+/**
+ * Implementado por SettingsRepository: converte AppSettings <-> BackupSettings.
+ * Mantido separado do resto do Room para o BackupManager poder testar cada parte isoladamente.
+ */
+interface BackupSettingsSource {
+    suspend fun exportSettings(): BackupSettings
+    suspend fun importSettings(settings: BackupSettings)
 }
 
 @Singleton
 class BackupManager @Inject constructor(
     private val context: Context,
     private val repository: BackupRepository,
+    private val settingsSource: BackupSettingsSource,
     private val imagesDir: File,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -152,7 +198,8 @@ class BackupManager @Inject constructor(
 
     suspend fun export(target: Uri, appVersion: String): BackupResult = withContext(ioDispatcher) {
         runCatching {
-            val data = repository.exportData()
+            // Dados + definições, sempre juntos: um backup é sempre "o telemóvel inteiro".
+            val data = repository.exportData().copy(settings = settingsSource.exportSettings())
             var missingImages = 0
 
             val manifest = BackupManifest(
@@ -164,6 +211,8 @@ class BackupManager @Inject constructor(
                     "tasks" to data.tasks.size,
                     "events" to data.events.size,
                     "categories" to data.categories.size,
+                    "reminders" to data.reminders.size,
+                    "wear_logs" to data.wearLogs.size,
                 ),
             )
 
@@ -265,6 +314,11 @@ class BackupManager @Inject constructor(
             temp.listFiles()?.forEach { file ->
                 file.copyTo(File(imagesDir, file.name), overwrite = true)
             }
+
+            // 4) definições — sempre aplicadas por último e sempre (mesmo em "Juntar"),
+            // porque não há "juntar" duas preferências de tema: o ficheiro importado é
+            // a fotografia mais recente do telemóvel de onde veio.
+            settingsSource.importSettings(data.settings)
 
             written.copy(missingImages = missingImages)
         } catch (t: Throwable) {

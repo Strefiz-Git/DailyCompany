@@ -1,6 +1,6 @@
 # AGENTS.md — DailyCompany
 
-App Android (Kotlin + Jetpack Compose), offline-first, UI em **português europeu (PT-PT)**.
+App Android (Kotlin + Jetpack Compose), offline-first, com interface em **pt-PT, pt-BR e inglês** e **tema claro/escuro**.
 Este ficheiro é obrigatório. Lê-o antes de qualquer tarefa e segue-o sempre.
 
 **Documentos do projeto (lê o que for relevante antes de trabalhar):**
@@ -18,9 +18,9 @@ Em caso de conflito, a ordem de autoridade é: pedido explícito do utilizador �
 1. **Carrega sempre a skill `kotlin-compose-android`** antes de escrever ou alterar código.
 2. **Carrega também as skills da área da tarefa** (tabela na secção 4). Duas áreas ⇒ duas skills.
 3. **Git: nunca trabalhes sem `git-commit-workflow`.** Commits com descrição, branch para mudanças experimentais ou grandes. Nunca `git push --force` no `main`.
-4. **Nenhum texto visível fora de `res/values/strings.xml`** (PT-PT, com plurais). Skill `android-localization-pt-pt`.
-5. **Código, identificadores, comentários, commits e branches em inglês.** Só a UI é portuguesa.
-6. **Nenhuma cor, tamanho de letra ou raio hardcoded num ecrã.** Só tokens de `ui/theme` (`DESIGN.md`).
+4. **Nenhum texto visível escrito à mão num ecrã.** Todos os textos vivem em `ui/theme/languages/` (`PtPtStrings`, `PtBrStrings`, `EnStrings`) através da interface `AppStrings`; nos composables usa-se `strings()`. Chave nova = as três línguas preenchidas. Skill `android-i18n-theme`.
+5. **Código, identificadores, comentários, commits e branches em inglês.** As respostas ao utilizador e a língua de referência da UI são PT-PT.
+6. **Nenhuma cor, tamanho de letra ou raio hardcoded num ecrã.** Só tokens de `ui/theme` (`DESIGN.md`). O tema tem de funcionar em claro e escuro.
 7. **Não inventes versões de bibliotecas.** Tudo vem de `gradle/libs.versions.toml`.
 8. **Compila antes de dizer que está feito:** `./gradlew :app:assembleDebug` (+ `:app:testDebugUnitTest` se mexeste em lógica). Reporta o resultado real; se não correste, diz.
 9. **Não testaste em dispositivo? Diz.** Fotos, alarmes, notificações e visual precisam de teste manual.
@@ -37,7 +37,8 @@ Em caso de conflito, a ordem de autoridade é: pedido explícito do utilizador �
 - **Kotlin**, **Jetpack Compose**, **Material 3**, single-Activity + Navigation Compose.
 - **MVVM + UDF:** o `ViewModel` expõe `StateFlow<UiState>`; a UI é stateless e recebe estado + lambdas. Só as rotas (`XxxRoute`) chamam `hiltViewModel()`.
 - **Room** para dados, **DataStore (Preferences)** para definições.
-- **Hilt** (DI), **WorkManager** (background), **AlarmManager** (alarmes exatos), **Coil** (imagens), **kotlinx.serialization** (backup).
+- **Hilt** (DI), **WorkManager** (background), **AlarmManager** (alarmes exatos), **Coil** (imagens), **kotlinx.serialization** (backup em zip).
+- **Línguas e tema** resolvidos em `ui/theme` e persistidos em DataStore (`SettingsRepository`): `AppLanguage` (pt-PT, pt-BR, en) e `ThemeMode` (claro, escuro, sistema).
 - **java.time** com desugaring; `Clock` injetado — nada de `System.currentTimeMillis()` espalhado.
 - Fotos em `filesDir/images/`; na BD guarda-se só o **nome do ficheiro**.
 - Camadas: `ui/` → `domain/` (modelos + use cases puros) → `data/`. A UI nunca fala com DAOs.
@@ -51,14 +52,16 @@ app/src/main/java/com/dailycompany/
 ├── MainActivity.kt
 ├── core/            # utils, extensions, Clock, dispatchers, Result
 ├── ui/
-│   ├── theme/       # Color.kt, Type.kt, Dimens.kt, Theme.kt
+│   ├── theme/       # Color.kt, Type.kt, Dimens.kt, Theme.kt, Language.kt
+│   │   └── languages/  # PtPtStrings.kt, PtBrStrings.kt, EnStrings.kt
 │   ├── components/  # componentes partilhados (ver DESIGN.md §7)
 │   └── navigation/  # NavHost, rotas, deep links
 ├── data/
 │   ├── local/       # Room (entities, daos, converters, migrations), DataStore
 │   ├── repository/
 │   ├── image/       # ImageProcessor, ImageStorage
-│   └── backup/      # export/import
+│   ├── settings/    # SettingsRepository (tema, língua), StringsProvider
+│   └── backup/      # BackupManager (.zip), DTOs, BackupRepository
 ├── domain/
 │   ├── model/
 │   └── usecase/     # GenerateOutfitUseCase, NextOccurrenceUseCase, ScheduleRemindersUseCase
@@ -96,19 +99,19 @@ Local: `.opencode/skills/<nome>/SKILL.md`
 | `android-hilt-di` | DI, módulos, ViewModels, erros Dagger/Hilt |
 | `android-data-offline` | Room, DAOs, migrações, DataStore, repositórios |
 | `android-compose-ui-design` | ecrãs, componentes, tema, estados, animações, acessibilidade |
-| `android-localization-pt-pt` | qualquer texto visível, datas, plurais |
+| `android-i18n-theme` | qualquer texto visível, línguas, datas, plurais, tema claro/escuro |
 | `android-images-media` | fotos: picker, câmara, EXIF, thumbnails, Coil |
 | `android-wardrobe-outfits` | roupas, categorias, tamanhos, outfits, botão aleatório |
 | `android-daily-planner` | tarefas do dia, guia do dia, ecrã Hoje |
 | `android-recurring-events-dates` | eventos, repetições, próximas ocorrências |
 | `android-alarms-notifications` | alarmes exatos, canais, permissões, boot |
-| `android-backup-restore` | exportar/importar dados e fotos |
+| `android-backup-restore` | exportar/importar **tudo**: dados de domínio + definições + fotos, num só ficheiro |
 | `android-testing` | testes unitários, DAO, Compose UI |
 | `android-debugging-adb` | logcat, crashes, ANRs, inspeção de BD |
 | `android-maps-location` | localização (meteorologia por cidade/coordenadas) |
 | `android-release-security` | assinatura, release, permissões, privacidade |
 
-**Regra prática:** UI + texto ⇒ `android-compose-ui-design` + `android-localization-pt-pt`.
+**Regra prática:** UI + texto ⇒ `android-compose-ui-design` + `android-i18n-theme`.
 Funcionalidade com dados ⇒ `android-data-offline` + skill da funcionalidade + `android-testing`.
 
 ---
@@ -141,7 +144,7 @@ Funcionalidade com dados ⇒ `android-data-offline` + skill da funcionalidade + 
 - Estados de ecrã: Loading · Content · Empty · Error(retry).
 - Apagar ⇒ **Anular** (Snackbar, ≥5 s).
 - Acessibilidade: alvos ≥48 dp, `contentDescription`, texto legível a 200%.
-- **Testes obrigatórios:** gerador de outfits · próximas ocorrências de eventos · parsing/ordenação de tamanhos · agendamento de lembretes · round-trip do backup.
+- **Testes obrigatórios:** gerador de outfits · próximas ocorrências de eventos · parsing/ordenação de tamanhos · agendamento de lembretes · round-trip **completo** do backup (dados + definições) · completude das três línguas.
 - Regras de negócio R1–R10 de `PROJECT.md` §9 são invioláveis.
 
 ---
