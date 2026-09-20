@@ -7,6 +7,7 @@ Este ficheiro é obrigatório. Lê-o antes de qualquer tarefa e segue-o sempre.
 - `PROJECT.md` — o que a app é, funcionalidades, regras de negócio, modelo de dados, roadmap.
 - `DESIGN.md` — identidade visual, tokens de cor/tipografia/espaço, componentes, acessibilidade.
 - `SCREENS.md` — mapa de navegação e especificação de cada ecrã.
+- `PROGRESS.md` — **registo obrigatório de progresso**: fase atual, o que já está feito, próximo passo.
 - `.opencode/skills/*/SKILL.md` — como fazer cada tipo de tarefa.
 
 Em caso de conflito, a ordem de autoridade é: pedido explícito do utilizador → `PROJECT.md` → `AGENTS.md` → `DESIGN.md`/`SCREENS.md` → skills.
@@ -29,6 +30,7 @@ Em caso de conflito, a ordem de autoridade é: pedido explícito do utilizador �
 12. **Não inventes funcionalidades nem ecrãs** que não estejam em `PROJECT.md`/`SCREENS.md` — propõe primeiro.
 13. **Respostas ao utilizador em PT-PT**, concisas, com blocos de código completos e prontos a copiar (não diffs parciais).
 14. Tarefa ambígua ou grande ⇒ **plano em 3–8 passos antes de escrever código**.
+15. **Carrega sempre a skill `project-progress-tracker`** e mantém `PROGRESS.md` atualizado ao fim de cada tarefa que mude o estado do projeto (fase, o que está feito, próximo passo). Sem registo, a tarefa não está feita.
 
 ---
 
@@ -81,7 +83,7 @@ app/src/main/java/com/dailycompany/
 5. Strings para `strings.xml`; tokens do tema na UI; componentes reutilizados de `ui/components/`.
 6. `./gradlew :app:assembleDebug` (+ `testDebugUnitTest`, + `lintDebug` se mexeste em UI/strings).
 7. Commits pequenos e descritivos.
-8. Resumo final: o que mudou · o que foi testado · o que falta validar em dispositivo.
+8. Resumo final: o que mudou · o que foi testado · o que falta validar em dispositivo. Se o estado do projeto mudou, atualizar `PROGRESS.md`.
 
 ---
 
@@ -95,6 +97,7 @@ Local: `.opencode/skills/<nome>/SKILL.md`
 | `app-code-organizer` | ficheiros/pacotes novos, refactors, mover código |
 | `project-folder-organizer` | estrutura do repositório, docs, ficheiros de raiz |
 | `git-commit-workflow` | **sempre** que há commits, branches, merges |
+| `project-progress-tracker` | **sempre** no fim de cada tarefa: atualiza `PROGRESS.md` (fase atual, o que mudou, próximo passo) |
 | `android-gradle-build` | Gradle, versões, plugins, R8, erros de build |
 | `android-hilt-di` | DI, módulos, ViewModels, erros Dagger/Hilt |
 | `android-data-offline` | Room, DAOs, migrações, DataStore, repositórios |
