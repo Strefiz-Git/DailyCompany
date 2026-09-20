@@ -8,8 +8,9 @@ import com.dailycompany.data.local.task.TaskDao
 import com.dailycompany.data.local.task.TaskEntity
 
 /**
- * Base de dados local (Room). Versão 1 = separador Tarefas completo.
- * `TaskConverters` é registado aqui (não dentro de `Room.databaseBuilder`).
+ * Base de dados Room da app — hoje com a única tabela `tasks`.
+ * O schema é exportado para `app/schemas` (regra: nunca commitar por cima,
+ * versionar o `1.json`).
  */
 @Database(
     entities = [TaskEntity::class],

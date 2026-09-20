@@ -19,4 +19,12 @@ class TaskConverters {
 
     @androidx.room.TypeConverter
     fun toLocalTime(value: String?): LocalTime? = value?.let { LocalTime.parse(it) }
+
+    @androidx.room.TypeConverter
+    fun fromPriority(value: TaskPriorityEntity?): String? = value?.name
+
+    @androidx.room.TypeConverter
+    fun toPriority(value: String?): TaskPriorityEntity? = value?.let {
+        TaskPriorityEntity.entries.firstOrNull { p -> p.name == it } ?: TaskPriorityEntity.NONE
+    }
 }
