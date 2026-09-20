@@ -51,11 +51,14 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 - Scaffold Android criado no Android Studio e integrado: repositório movido para a raiz (`gradle/`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `app/`).
 - Package renomeado `com.example.dailycompany` → `com.dailycompany`; `minSdk` 26.
 - Version catalog atualizado: Hilt + KSP, DataStore Preferences, Navigation Compose, `lifecycle-viewmodel-compose`, `core-splashscreen`, `material-icons-extended`.
-- Tema: `Color.kt` (tokens de DESIGN.md, claro/escuro), `Dimens.kt` (`Spacing`, `AppShapes`), `Type.kt` (pesos/tamanhos de DESIGN.md, fontes do sistema por agora), `Theme.kt` (`DailyCompanyTheme` com `ThemeMode`, locale, `AppStrings`).
+- Tema: `Color.kt` (tokens de DESIGN.md, claro/escuro), `Dimens.kt` (`Spacing`, `AppShapes`), `Type.kt` (pesos/tamanhos de DESIGN.md, fontes do sistema por agora), `Theme.kt` (`DailyCompanyTheme` com `ThemeMode`, locale, `AppStrings`). `LocalContext` não é substituído (partia o `hiltViewModel()`); o locale chega aos composables por `LocalConfiguration` + `LocalAppLocale`.
 - Línguas: `AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings` (completas nas três línguas).
 - `SettingsRepository` + `StringsProvider` (DataStore), `AppSettingsViewModel` com splash até a 1.ª leitura.
 - `DailyApp` (`@HiltAndroidApp`), splash (temas XML claro/escuro + `ic_splash_icon`).
 - Navegação: `DailyCompanyApp` com `NavigationBar` de 5 destinos + `NavHost`; 5 ecrãs vazios (`today`, `tasks`, `events`, `wardrobe`, `outfits`) com `EmptyState`.
+- Componentes partilhados: `TopAppBarWithSettings` (menu ⋮ → Definições) e `SectionHeader`.
+- Ecrã **Definições**: `SettingsViewModel` + `SettingsRoute`/`SettingsScreen` (stateless, com preview claro/escuro) — tema Claro/Escuro/Sistema, cor dinâmica e língua (Seguir o sistema · PT-PT · PT-BR · EN), aplicadas de imediato e persistidas no DataStore.
+- Navegação: rota `settings` em full screen (bottom bar escondida, back na `TopAppBar`); menu ⋮ ligado nos 5 destinos.
 - `.gitignore` da raiz (gradle, `.kotlin/`, keys, APKs).
 
 **Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
@@ -74,6 +77,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-20 | Stack base aprovada pelo utilizador: Hilt+KSP, DataStore, Navigation, splash, `material-icons-extended`. |
 | 2026-09-20 | Fontes Outfit/Inter adiadas para a fase visual; usa-se a do sistema com os mesmos pesos. |
 | 2026-09-20 | Criado `PROGRESS.md` e skill `project-progress-tracker` para registo obrigatório de progresso. |
+| 2026-09-20 | Builds no PC exigem `JAVA_HOME` a apontar para um JDK 21 (JBR do Android Studio ou `jdk-21`); o JDK 25 da PATH parte o Kotlin script compiler do Gradle 8.13. |
+| 2026-09-20 | `DailyCompanyTheme` deixou de substituir `LocalContext` por `createConfigurationContext(...)`: causava `IllegalStateException: Expected an activity context ...` no `hiltViewModel()` do ecrã Definições. O locale passa por `LocalConfiguration` + `LocalAppLocale`. |
 | 2026-09-20 | Skills `project-folder-organizer` e `app-code-organizer` adicionadas; `check_structure.py` movido para a skill. |
 | 2026-09-20 | Criação do `AGENTS.md` com a regra de carregar `kotlin-compose-android` em qualquer tarefa de código. |
 
@@ -82,6 +87,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | Data | O que mudou |
 |---|---|
 | 2026-09-20 | Fase 0 validada em dispositivo pelo utilizador (splash, tema claro/escuro, 5 ecrãs navegáveis). Fase 0 concluída; falta commit/merge. |
+| 2026-09-20 | Ecrã Definições (tema, cor dinâmica, língua) + `TopAppBarWithSettings` com ⋮ + `SectionHeader`; rota `settings` full screen a esconder a bottom bar, ⋮ ligado nos 5 destinos. Nomes das línguas movidos para `AppStrings`. Build + testes + lint verdes (com `JAVA_HOME` apontando a JDK 21 — o JDK 25 da PATH parte o script compiler do Gradle). |
+| 2026-09-20 | Corrigido crash ao abrir Definições: o tema substituía `LocalContext` por um contexto sem Activity, partindo o `hiltViewModel()`. Removido o override; build + testes + lint verdes. Falta revalidar em dispositivo. |
 | 2026-09-20 | Fase 0: scaffold movido para a raiz, package `com.dailycompany`, Hilt/DataStore/Navigation/splash adicionados, tema claro/escuro com tokens do DESIGN.md, 3 línguas completas, navegação com 5 ecrãs vazios. Build + testes + lint verdes. |
 | 2026-09-20 | Fase 0 iniciada: documentação completa, skills prontas, `exemplos/` criado. Sem código Android ainda. |
 

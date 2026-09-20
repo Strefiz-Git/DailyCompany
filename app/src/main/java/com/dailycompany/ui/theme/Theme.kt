@@ -60,11 +60,11 @@ val LocalAppColors = staticCompositionLocalOf { LightAppColors }
 val LocalSpacing = staticCompositionLocalOf { Spacing }
 val LocalAppLocale = staticCompositionLocalOf { Locale.forLanguageTag(AppLanguage.DEFAULT.tag) }
 
-/** Línguas suportadas pela app. */
-enum class AppLanguage(val tag: String, val label: String) {
-    PT_PT("pt-PT", "Português (Portugal)"),
-    PT_BR("pt-BR", "Português (Brasil)"),
-    EN("en", "English");
+/** Línguas suportadas pela app. Os nomes visíveis vêm de `AppStrings` (rule: no text in theme). */
+enum class AppLanguage(val tag: String) {
+    PT_PT("pt-PT"),
+    PT_BR("pt-BR"),
+    EN("en");
 
     companion object {
         val DEFAULT = PT_PT
@@ -125,10 +125,10 @@ fun DailyCompanyTheme(
     val localizedConfiguration = remember(configuration, locale) {
         android.content.res.Configuration(configuration).apply { setLocale(locale) }
     }
-    val localizedContext = remember(localizedConfiguration) {
-        context.createConfigurationContext(localizedConfiguration)
-    }
 
+    // Do NOT override LocalContext here: hiltViewModel() needs the activity context
+    // (createConfigurationContext would return an unwrappable ContextImpl and crash).
+    // Locale reaches composables via LocalConfiguration and LocalAppLocale.
     CompositionLocalProvider(
         LocalAppColors provides appColors,
         LocalSpacing provides Spacing,
@@ -136,7 +136,6 @@ fun DailyCompanyTheme(
         LocalAppLanguage provides language,
         LocalAppLocale provides locale,
         LocalConfiguration provides localizedConfiguration,
-        LocalContext provides localizedContext,
     ) {
         MaterialTheme(
             colorScheme = scheme,
@@ -320,6 +319,9 @@ interface AppStrings {
     val settingsDynamicColor: String
     val settingsLanguage: String
     val settingsLanguageSystem: String
+    val settingsLanguagePtPt: String
+    val settingsLanguagePtBr: String
+    val settingsLanguageEn: String
     val settingsDay: String
     val settingsDailyBriefTime: String
     val settingsFirstDayOfWeek: String
