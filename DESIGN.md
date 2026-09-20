@@ -283,7 +283,9 @@ fun DailyCompanyTheme(
 }
 ```
 
-`enableEdgeToEdge()` na Activity; as barras de sistema seguem o tema. A preferência claro/escuro/sistema vem do DataStore e é passada a `darkTheme`.
+`enableEdgeToEdge()` na Activity; as barras de sistema seguem o tema. `ThemeMode` (claro/escuro/sistema), língua e cor dinâmica vêm do DataStore e são passados ao tema.
+
+> A versão final e completa deste ficheiro — já com `ThemeMode`, língua e override de `Locale` — está em `starter/ui/theme/Theme.kt`. O bloco acima é a base de cor; usa o ficheiro do starter.
 
 ## 6. Ícones e ilustração
 
@@ -326,7 +328,11 @@ Cada ecrã com dados modela **Loading · Content · Empty · Error(retry)**.
 
 ## 11. Tom de voz (resumo — detalhe em `android-localization-pt-pt`)
 
-PT-PT, tratamento por **tu**, curto e direto. Botões de uma ou duas palavras: *Guardar · Cancelar · Anular · Adicionar · Editar · Apagar · Outro · Usar hoje · Tentar novamente*. Erros dizem o que aconteceu e o que fazer. Nada de exclamações a mais nem de linguagem técnica.
+Três línguas (pt-PT, pt-BR, inglês) em objetos Kotlin — ver `android-i18n-theme`. PT-PT é a referência: tratamento por **tu**, curto e direto. Botões de uma ou duas palavras: *Guardar · Cancelar · Anular · Adicionar · Editar · Apagar · Outro · Usar hoje · Tentar novamente*. Erros dizem o que aconteceu e o que fazer. Nada de exclamações a mais nem de linguagem técnica.
+
+## 11.1 Línguas
+
+O texto não vem de `strings.xml`: vem de `AppStrings` (`ui/theme/Language.kt`) implementado por `PtPtStrings`, `PtBrStrings` e `EnStrings`. Nos composables usa-se `val s = strings()`. Uma chave nova tem de ser preenchida nas três línguas — o compilador obriga. Datas e números seguem `LocalAppLocale`, não o locale do sistema.
 
 ## 12. Checklist de UI (antes de fechar qualquer ecrã)
 
@@ -337,6 +343,6 @@ PT-PT, tratamento por **tu**, curto e direto. Botões de uma ou duas palavras: *
 - [ ] Insets e teclado tratados; nada escondido por baixo das barras.
 - [ ] Uma ação primária clara, ao alcance do polegar.
 - [ ] Componentes reutilizados de `ui/components/`.
-- [ ] Textos em `strings.xml` (PT-PT, com plurais).
+- [ ] Textos vindos de `strings()`, com as três línguas preenchidas.
 - [ ] Apagar tem Anular.
 - [ ] `key` estável nas listas; grelhas só com thumbnails.

@@ -28,6 +28,7 @@ As apps de tarefas não sabem nada da tua roupa. As apps de guarda-roupa não sa
 3. **Visual primeiro.** As fotos das roupas são o conteúdo, não decoração.
 4. **Uma mão, três segundos.** As ações do dia-a-dia estão ao alcance do polegar.
 5. **Nunca um beco sem saída.** Toda a lista vazia explica o que fazer e oferece a ação.
+6. **Em três línguas, à escolha.** pt-PT (referência), pt-BR e inglês, e tema claro/escuro — trocados na hora, sem reiniciar a app.
 6. **Regras, não IA.** As sugestões são determinísticas, explicáveis e testáveis.
 7. **Calma.** Sem gamificação, sem streaks, sem culpa por não cumprir. Adiar é uma ação de primeira classe.
 8. **Zero fricção na entrada.** Abre e usa. Nada de onboarding obrigatório com 8 passos.
@@ -38,7 +39,7 @@ Sincronização cloud · contas de utilizador · partilha social · e-commerce o
 
 ## 6. Utilizador
 
-Utilizador único, uso pessoal diário. Não há multi-perfil, não há partilha.
+Utilizador único, uso pessoal diário. Não há multi-perfil, não há partilha. A app fala pt-PT, pt-BR ou inglês, conforme a escolha (por omissão segue o sistema).
 Momentos de uso:
 - **Manhã (30 s):** ver o dia + decidir a roupa.
 - **Ao longo do dia (5 s):** riscar uma tarefa, adiar, ver o próximo lembrete.
@@ -74,8 +75,10 @@ Momentos de uso:
 - Guardo o resultado com um nome ("Trabalho — frio") e reutilizo-o.
 - Digo "usei hoje" e a app deixa de mo sugerir nos dias seguintes.
 
-**Dados**
-- Exporto tudo para um ficheiro e recupero-o num telemóvel novo, com as fotos incluídas.
+**Dados, línguas e tema**
+- Exporto tudo para um ficheiro `.zip` e recupero-o num telemóvel novo, com as fotos incluídas.
+- Mudo de telemóvel sem perder nada, mesmo sem nuvem nem conta.
+- Escolho a língua e o tema nas definições e a app muda na hora.
 
 ## 8. Funcionalidades (âmbito detalhado)
 
@@ -130,10 +133,14 @@ Ecrã inicial. Secções, por ordem:
 - Estatísticas simples: peça mais usada, peça nunca usada, outfit mais repetido.
 
 ### 8.7 Definições
-Tema (claro/escuro/sistema) · cor de destaque · hora do resumo diário · cidade/meteorologia ligada ou desligada · primeiro dia da semana · formato de hora · dias a evitar repetir outfit · gestão de categorias · **exportar/importar** · sobre e licenças.
+**Aparência:** tema claro/escuro/sistema, cor dinâmica (desligada por omissão), **língua** (seguir o sistema, pt-PT, pt-BR, inglês) — tudo aplicado na hora, sem reiniciar a app.
+**Dia:** hora do resumo diário, primeiro dia da semana, formato de hora.
+**Outfits:** dias a evitar repetir, casaco por omissão, meteorologia.
+**Guarda-roupa:** gerir categorias. **Dados:** exportar/importar. **Sobre:** versão e licenças.
 
 ### 8.8 Backup
-Exportação de **tudo** (dados + fotos) num `.zip` escolhido pelo utilizador; importação com estratégia **Juntar** (por omissão) ou **Substituir tudo**. Detalhe na skill `android-backup-restore`.
+Enquanto não houver sincronização na nuvem, o backup é a forma de **mudar de telemóvel**: exportação de **tudo** (dados + fotos) num ficheiro `.zip` que o utilizador escolhe onde guardar, e importação com estratégia **Juntar** (por omissão) ou **Substituir tudo**.
+Formato: `manifest.json` (app, versão do esquema, contagens) + `data.json` (entidades ligadas por `uid`) + `images/`. O picker é do sistema (SAF), por isso não é preciso nenhuma permissão de armazenamento. A importação valida tudo antes de escrever, corre numa transação, e no fim recalcula todos os alarmes. Detalhe na skill `android-backup-restore`.
 
 ## 9. Regras de negócio que não podem falhar
 
@@ -148,7 +155,9 @@ Exportação de **tudo** (dados + fotos) num `.zip` escolhido pelo utilizador; i
 | R7 | Qualquer apagar tem **Anular** durante pelo menos 5 segundos. |
 | R8 | Tarefa por concluir nunca desaparece: transita para Hoje como atrasada. |
 | R9 | Depois de restaurar um backup, todos os alarmes são recalculados antes de dizer "concluído". |
-| R10 | Nenhum texto visível fora de `strings.xml`. |
+| R10 | Nenhum texto visível escrito à mão num ecrã: tudo passa por `AppStrings`, nas três línguas. |
+| R11 | Mudar de língua ou de tema aplica-se de imediato e sobrevive a fechar a app. |
+| R12 | Uma importação só é dada como concluída depois de os alarmes serem recalculados. |
 
 ## 10. Modelo de dados (visão geral)
 
@@ -215,14 +224,16 @@ Uma funcionalidade só está feita quando: compila · tem testes da lógica pura
 
 ## 15. Decisões tomadas
 
-Kotlin + Compose + M3 · offline total · Room + DataStore · Hilt · sugestões por regras · fotos em armazenamento privado (BD guarda só o nome do ficheiro) · UI em PT-PT e código em inglês · `minSdk 26` · git com commits descritivos e branches para mudanças grandes.
+Kotlin + Compose + M3 · offline total · Room + DataStore · Hilt · sugestões por regras · fotos em armazenamento privado (BD guarda só o nome do ficheiro) · código em inglês · `minSdk 26` · git com commits descritivos e branches para mudanças grandes.
+**Línguas em objetos Kotlin** (`AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings`) em vez de `strings.xml`: troca-se o lint do Android por segurança de compilação (falta uma chave = não compila) e troca instantânea de língua. **Tema claro/escuro** com `ThemeMode` guardado em DataStore.
+**Backup em `.zip` com fotos**, por SAF, sem permissões, como substituto da nuvem.
 
 ## 16. Decisões em aberto
 
 - Nome comercial e ícone (repo: `DailyCompany`; proposta de nome visível: **Daily**).
 - Meteorologia: API externa (exige internet + leitura dos termos) *ou* escolha manual "frio/ameno/quente".
 - Recorte manual de fotos / remoção de fundo: só se compensar o custo.
-- Widget do ecrã inicial e segundo idioma (inglês): pós-v1.
+- Widget do ecrã inicial: pós-v1. Sincronização com Google Drive: só depois do backup manual estar sólido.
 
 ## 17. Glossário
 

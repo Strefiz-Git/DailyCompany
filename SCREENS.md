@@ -132,7 +132,14 @@ Colagem grande · nome · lista das peças (toque abre a peça) · notas · "usa
 Árvore de dois níveis, arrastável para reordenar. Adicionar categoria e subcategoria, renomear, apagar (avisa quantas peças perdem a categoria; nunca apaga peças). Repor categorias por omissão.
 
 ## 8. Definições (`settings`)
-Secções: **Aparência** (tema claro/escuro/sistema, cor dinâmica) · **Dia** (hora do resumo diário, primeiro dia da semana, formato de hora) · **Outfits** (dias a evitar repetir, incluir casaco por omissão, meteorologia e cidade) · **Guarda-roupa** (gerir categorias) · **Dados** (exportar, importar, apagar tudo) · **Ajuda** (alarmes e bateria) · **Sobre** (versão, licenças).
+Secções: **Aparência** (tema Claro/Escuro/Sistema, cor dinâmica, **língua**: Seguir o sistema · Português (Portugal) · Português (Brasil) · English — aplicadas de imediato) · **Dia** (hora do resumo diário, primeiro dia da semana, formato de hora) · **Outfits** (dias a evitar repetir, incluir casaco por omissão, meteorologia e cidade) · **Guarda-roupa** (gerir categorias) · **Dados** (`settings_backup`) · **Ajuda** (alarmes e bateria) · **Sobre** (versão, licenças).
+
+### 8.1 Dados / cópia de segurança (`settings_backup`)
+Dois cartões:
+- **Exportar dados** — explica o que vai no ficheiro, botão abre o `CreateDocument("application/zip")` do sistema com nome sugerido `dailycompany-backup-AAAA-MM-DD-HHmm.zip`. No fim, mensagem com as contagens e aviso se alguma foto faltou.
+- **Importar dados** — botão abre `OpenDocument(["application/zip"])`. Depois de escolher, um diálogo pergunta a estratégia: **Juntar** (por omissão) ou **Substituir tudo**; esta última pede uma segunda confirmação explícita. Durante o processo, indicador de progresso e botões desativados. Erros possíveis com mensagem própria: ficheiro inválido, versão não suportada, falha a meio (nada é gravado).
+
+Nota: sem nuvem e sem conta, este ecrã é a única forma de passar os dados para outro telemóvel — deve ser fácil de encontrar e estar explicado numa frase.
 
 ## 9. Ecrãs de sistema e transversais
 - **Pedidos de permissão:** notificações (antes do primeiro lembrete), alarmes exatos (antes do primeiro alarme), câmara (só se for usada câmara própria). Sempre com uma frase de contexto em PT-PT antes do diálogo do sistema.
