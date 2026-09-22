@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.data.repository.TaskRepository
 import com.dailycompany.domain.model.Task
+import com.dailycompany.domain.model.TaskIcon
 import com.dailycompany.domain.model.TaskPriority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -37,6 +38,7 @@ data class TaskEditUiState(
     val dueDate: LocalDate? = null,
     val dueTime: LocalTime? = null,
     val priority: TaskPriority = TaskPriority.NONE,
+    val icon: TaskIcon? = null,
     val canSave: Boolean = false,
     val snackbar: TaskEditSnackbar? = null,
 )
@@ -74,6 +76,7 @@ class TaskEditViewModel @Inject constructor(
                         dueDate = loaded.dueDate,
                         dueTime = loaded.dueTime,
                         priority = loaded.priority,
+                        icon = loaded.icon,
                         canSave = loaded.title.isNotBlank(),
                     )
                 } ?: run {
@@ -105,6 +108,10 @@ class TaskEditViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(priority = priority)
     }
 
+    fun onIconChange(icon: TaskIcon?) {
+        _uiState.value = _uiState.value.copy(icon = icon)
+    }
+
     fun save() {
         if (!_uiState.value.canSave) return
         viewModelScope.launch {
@@ -117,6 +124,7 @@ class TaskEditViewModel @Inject constructor(
                     dueDate = state.dueDate,
                     dueTime = state.dueTime,
                     priority = state.priority,
+                    icon = state.icon,
                     done = false,
                     createdAt = clock.now(),
                 ),

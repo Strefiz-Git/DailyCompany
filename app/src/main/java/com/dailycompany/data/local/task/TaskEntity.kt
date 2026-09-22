@@ -20,6 +20,7 @@ data class TaskEntity(
     @ColumnInfo(name = "due_date") val dueDate: LocalDate? = null,
     val dueTime: LocalTime? = null,
     val priority: TaskPriorityEntity = TaskPriorityEntity.NONE,
+    val icon: String? = null,
     val done: Boolean = false,
     @ColumnInfo(name = "created_at") val createdAt: Long = 0L,
     @ColumnInfo(name = "done_at") val doneAt: Long? = null,

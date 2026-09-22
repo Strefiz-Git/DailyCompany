@@ -5,6 +5,8 @@ import com.dailycompany.data.local.task.TaskDao
 import com.dailycompany.data.local.task.TaskEntity
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.parseTaskIcon
+import com.dailycompany.domain.model.serialize
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,6 +37,7 @@ class RoomTaskRepository @Inject constructor(
             com.dailycompany.data.local.task.TaskPriorityEntity.MEDIUM -> TaskPriority.MEDIUM
             com.dailycompany.data.local.task.TaskPriorityEntity.HIGH -> TaskPriority.HIGH
         },
+        icon = parseTaskIcon(icon),
         done = done,
         createdAt = LocalDateTime.ofInstant(
             Instant.ofEpochMilli(createdAt),
@@ -54,6 +57,7 @@ class RoomTaskRepository @Inject constructor(
             TaskPriority.MEDIUM -> com.dailycompany.data.local.task.TaskPriorityEntity.MEDIUM
             TaskPriority.HIGH -> com.dailycompany.data.local.task.TaskPriorityEntity.HIGH
         },
+        icon = icon?.serialize(),
         done = done,
         createdAt = createdAt.atZone(clock.zone()).toInstant().toEpochMilli(),
         doneAt = doneAt?.atZone(clock.zone())?.toInstant()?.toEpochMilli(),

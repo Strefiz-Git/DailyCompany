@@ -33,7 +33,7 @@ object AppDiModule {
             context,
             AppDatabase::class.java,
             "dailycompany.db",
-        ).build()
+        ).addMigrations(AppDatabase.MIGRATION_1_2).build()
 
     @Provides
     fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()

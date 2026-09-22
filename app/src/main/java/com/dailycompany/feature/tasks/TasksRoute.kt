@@ -311,16 +311,22 @@ private fun TaskRow(
                 .weight(1f)
                 .clickable(onClick = onOpen),
         ) {
-            Text(
-                text = task.title,
-                style = MaterialTheme.typography.titleSmall,
-                textDecoration = if (task.done) TextDecoration.LineThrough else null,
-                color = if (task.done) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+            ) {
+                task.icon?.let { TaskIconBadge(icon = it) }
+                Text(
+                    text = task.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    textDecoration = if (task.done) TextDecoration.LineThrough else null,
+                    color = if (task.done) {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
+            }
             task.note.takeIf { it.isNotBlank() && !task.done }?.let {
                 Text(
                     text = it,

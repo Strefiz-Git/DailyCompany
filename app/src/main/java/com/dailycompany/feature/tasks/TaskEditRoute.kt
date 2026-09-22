@@ -1,14 +1,23 @@
 package com.dailycompany.feature.tasks
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -53,6 +62,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dailycompany.domain.model.TaskIcon
 import com.dailycompany.domain.model.TaskPriority
 import com.dailycompany.ui.theme.AppStrings
 import com.dailycompany.ui.theme.LocalAppLocale
@@ -102,6 +112,7 @@ fun TaskEditRoute(
         onDateChange = viewModel::onDateChange,
         onTimeChange = viewModel::onTimeChange,
         onPriorityChange = viewModel::onPriorityChange,
+        onIconChange = viewModel::onIconChange,
         onSave = viewModel::save,
         onDelete = viewModel::delete,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -118,6 +129,7 @@ private fun TaskEditScreen(
     onDateChange: (LocalDate?) -> Unit,
     onTimeChange: (LocalTime?) -> Unit,
     onPriorityChange: (TaskPriority) -> Unit,
+    onIconChange: (TaskIcon?) -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
     snackbarHost: @Composable () -> Unit,
@@ -238,6 +250,18 @@ private fun TaskEditScreen(
                         }
                     }
                 }
+                Spacer(Modifier.height(Spacing.md))
+
+                Text(
+                    text = s.tasksFieldIcon,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(Spacing.xs))
+                IconPicker(
+                    selected = uiState.icon,
+                    onSelect = onIconChange,
+                )
                 Spacer(Modifier.height(Spacing.lg))
 
                 TextButton(
@@ -310,6 +334,138 @@ private fun TaskEditScreen(
                 TimePicker(state = state)
             },
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun IconPicker(
+    selected: TaskIcon?,
+    onSelect: (TaskIcon?) -> Unit,
+) {
+    val s = strings()
+    var mode by remember { mutableStateOf(IconMode.ICONS) }
+
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        IconMode.entries.forEachIndexed { index, item ->
+            SegmentedButton(
+                selected = mode == item,
+                onClick = { mode = item },
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = IconMode.entries.size,
+                ),
+            ) {
+                Text(item.label(s))
+            }
+        }
+    }
+    Spacer(Modifier.height(Spacing.sm))
+
+    val palette = MaterialTheme.colorScheme
+    val shape = RoundedCornerShape(Spacing.sm)
+
+    when (mode) {
+        IconMode.ICONS -> FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        ) {
+            materialTaskIconNames.forEach { name ->
+                val icon = materialTaskIcon(name)
+                val isSelected = selected == icon
+                Box(
+                    modifier = Modifier
+                        .size(Spacing.xxl)
+                        .background(
+                            color = if (isSelected) {
+                                palette.secondaryContainer
+                            } else {
+                                palette.surfaceVariant
+                            },
+                            shape = shape,
+                        )
+                        .then(
+                            if (isSelected) {
+                                Modifier.border(
+                                    width = Spacing.xxs,
+                                    color = palette.primary,
+                                    shape = shape,
+                                )
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .clickable { onSelect(icon) }
+                        .padding(Spacing.xs),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = materialIconVector(name),
+                        contentDescription = name,
+                        tint = if (isSelected) palette.onSecondaryContainer else palette.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        IconMode.EMOJIS -> FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        ) {
+            emojiTaskIcons.forEach { char ->
+                val icon = TaskIcon.Emoji(char)
+                val isSelected = selected == icon
+                Box(
+                    modifier = Modifier
+                        .size(Spacing.xxl)
+                        .background(
+                            color = if (isSelected) {
+                                palette.secondaryContainer
+                            } else {
+                                palette.surfaceVariant
+                            },
+                            shape = shape,
+                        )
+                        .then(
+                            if (isSelected) {
+                                Modifier.border(
+                                    width = Spacing.xxs,
+                                    color = palette.primary,
+                                    shape = shape,
+                                )
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .clickable { onSelect(icon) }
+                        .padding(Spacing.xs),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = char,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+            }
+        }
+    }
+
+    if (selected != null) {
+        Spacer(Modifier.height(Spacing.xs))
+        TextButton(onClick = { onSelect(null) }) {
+            Text(s.tasksIconNone)
+        }
+    }
+}
+
+/** Abas do seletor de ícone. */
+private enum class IconMode {
+    ICONS,
+    EMOJIS;
+
+    fun label(s: AppStrings): String = when (this) {
+        ICONS -> s.tasksIconTabIcons
+        EMOJIS -> s.tasksIconTabEmojis
     }
 }
 

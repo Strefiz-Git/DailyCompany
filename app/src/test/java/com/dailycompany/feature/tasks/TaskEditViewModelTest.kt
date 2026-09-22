@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.dailycompany.core.MainDispatcherRule
 import com.dailycompany.core.time.FixedClock
 import com.dailycompany.domain.model.Task
+import com.dailycompany.domain.model.TaskIcon
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -65,6 +66,7 @@ class TaskEditViewModelTest {
         vm.onNoteChange("padaria")
         vm.onDateChange(today)
         vm.onTimeChange(LocalTime.of(18, 30))
+        vm.onIconChange(TaskIcon.Emoji("🛒"))
 
         vm.events.test {
             vm.save()
@@ -76,6 +78,18 @@ class TaskEditViewModelTest {
         assertEquals("padaria", saved.note)
         assertEquals(today, saved.dueDate)
         assertEquals(LocalTime.of(18, 30), saved.dueTime)
+        assertEquals(TaskIcon.Emoji("🛒"), saved.icon)
+    }
+
+    @Test
+    fun `onIconChange atualiza o estado e pode limpar`() = runTest {
+        val vm = TaskEditViewModel(SavedStateHandle(), FakeTaskRepository(), FixedClock(today))
+
+        vm.onIconChange(TaskIcon.Material("home"))
+        assertEquals(TaskIcon.Material("home"), vm.uiState.value.icon)
+
+        vm.onIconChange(null)
+        assertNull(vm.uiState.value.icon)
     }
 
     @Test

@@ -22,6 +22,7 @@ data class Task(
     val dueDate: LocalDate? = null,
     val dueTime: LocalTime? = null,
     val priority: TaskPriority = TaskPriority.NONE,
+    val icon: TaskIcon? = null,
     val done: Boolean = false,
     val createdAt: LocalDateTime,
     val doneAt: LocalDateTime? = null,
@@ -34,6 +35,7 @@ fun newTask(
     dueDate: LocalDate?,
     dueTime: LocalTime?,
     priority: TaskPriority,
+    icon: TaskIcon? = null,
     createdAt: LocalDateTime,
 ): Task = Task(
     title = title,
@@ -41,5 +43,6 @@ fun newTask(
     dueDate = dueDate,
     dueTime = dueTime,
     priority = priority,
+    icon = icon,
     createdAt = createdAt,
 )

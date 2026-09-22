@@ -206,9 +206,13 @@ interface AppStrings {
     val tasksFieldDate: String
     val tasksFieldTime: String
     val tasksFieldPriority: String
+    val tasksFieldIcon: String
     val tasksPriorityNone: String
     val tasksPriorityMedium: String
     val tasksPriorityHigh: String
+    val tasksIconNone: String
+    val tasksIconTabIcons: String
+    val tasksIconTabEmojis: String
     val tasksOverdue: String
     val tasksPostponeTomorrow: String
     val tasksEmpty: String
