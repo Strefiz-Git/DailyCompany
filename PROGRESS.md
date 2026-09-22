@@ -11,8 +11,8 @@
 | Campo | Valor |
 |---|---|
 | Fase atual | **1 — Tarefas** (em curso 🔶) |
-| Build | `:app:assembleDebug` ✗ (falha no Room KSP — colunas do DAO vs schema; causa identificada) · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ |
-| Prioridade imediata | Corrigir `TaskEntity`/`TaskDao` (alinhar colunas) e voltar a compilar |
+| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) |
+| Prioridade imediata | Terminar Fase 1 (CRUD, adiar, undo, estados vazios), testar em dispositivo e push da branch (aguarda OK) |
 | Branch ativa | `feat/fase-1-tarefas` |
 
 ## 2. Fases do roadmap
@@ -63,19 +63,19 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 **Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
 
-**Fase 1 — Tarefas (em curso 🔶)**
-- `feature/tasks/` — `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/Próximas/Sem data/Concluídas.
-- Camada Room: `TaskEntity` (`tasks`), `TaskDao` (queries + `markDone`/`markNotDone`/`setDueDate`), `TaskConverters` (`LocalDate`/`LocalTime`/`TaskPriorityEntity`), `AppDatabase` v1 (`exportSchema=true`, schema `1.json` exportado), `TaskPriorityEntity` (`NONE`/`MEDIUM`/`HIGH`).
-- `RoomTaskRepository` (concluir/adiar), `AppDiModule` (dispatchers: `Dispatchers.IO.asLimitedParallelism(2)` + qualifiers).
-- **Bloqueio do build:** Room KSP falha — as `@Query` do `TaskDao` usam colunas snake_case (`created_at`, `done_at`, `due_date`) mas o `TaskEntity` sem `@ColumnInfo` gera colunas camelCase (schema v1). Próximo passo: alinhar.
-- **Pendência de limpeza:** os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo — remover com aprovação do utilizador.
+**Fase 1 — Tarefas (em curso 🔶, build desbloqueado)**
+- `feature/tasks/` — `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/Próximas/Sem data/Concluídas; snackbar e `contentDescription` via `AppStrings` (5 chaves novas ×3 línguas) e snackbar do ViewModel como enum `TaskSnackbar` (a UI resolve o texto).
+- Camada Room: `TaskEntity` (`tasks`, colunas `due_date`/`created_at`/`done_at` + campo `doneAt`), `TaskDao` (queries alinhadas ao schema, sem duplicados), `TaskConverters`, `AppDatabase` v1 (`exportSchema=true`, schema `1.json` regenerado — v1 nunca foi instalado, sem migração), `TaskPriorityEntity`.
+- `RoomTaskRepository` (mapeia `doneAt` nos dois sentidos; usa `AppClock` injetado, sem `System.currentTimeMillis()`).
+- DI consolidado: `AppDiModule` único (Room, `AppClock`, `Dispatchers.IO.limitedParallelism(2)`) + `RepositoryModule` (`@Binds` `TaskRepository`); `AppModule` removido (duplicava `AppClock`).
+- Limpeza feita: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano; `*.log` no `.gitignore`.
 
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
-1. **Desbloquear o build:** alinhar `TaskEntity.kt` (adicionar `@ColumnInfo` snake_case e o campo `doneAt`) ou as queries do `TaskDao` ao schema v1 (camelCase); `RoomTaskRepository.setDone` passa a chamar `markDone(id)`/`markNotDone(id)`. Rebuild `:app:assembleDebug`.
-2. Terminar Fase 1: CRUD completo, adiar, undo (Snackbar ≥5 s), estados vazios; ecrã `tasks` conforme `SCREENS.md` §3.
+1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, separadores e tema claro/escuro.
+2. Terminar Fase 1 conforme `SCREENS.md` §3 (CRUD completo de tarefas) e adicionar os testes unitários obrigatórios (completude das 3 línguas, `groupTasks`).
 3. Verificação: `:app:assembleDebug` + `:app:testDebugUnitTest` + teste em dispositivo.
-4. Limpeza do repo (pendente de aprovação): remover os ficheiros de debug (`.log`/`.txt` da raiz) e os commits "." desnecessários.
+4. Push da branch `feat/fase-1-tarefas` para `origin` (aguarda OK do utilizador) e, no fim da fase, merge para `main`.
 
 ## 5. Decisões tomadas recentemente
 
@@ -93,6 +93,10 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Diagnóstico do build: Room KSP "no such column: created_at/done_at/due_date" — as `@Query` do `TaskDao` usam snake_case mas o `TaskEntity` (sem `@ColumnInfo`) gera colunas camelCase (schema v1 confirmado). |
 | 2026-09-22 | Otimização anti-conflito dos docs/skills (decisão desta tarefa): texto de ecrãs só via `AppStrings` (removeu-se a contradição `strings.xml` do AGENTS/PROJECT/skills), prefixos de branch padronizados (`feat/`/`exp/`), criadas as skills em falta `android-hilt-di`, `android-compose-ui-design`, `android-images-media`, ordem de autoridade clarificada no `AGENTS.md`, `app-code-organizer` alinhado à estrutura real, `android-wardrobe-outfits` reescrito com R1–R5/R13. |
 | 2026-09-22 | Adicionado workflow GitHub Actions `opencode.yml` (reage a `/opencode` ou `/oc` em comentários de issues e PRs) — dev tooling, não afeta o offline-first da app. Commit automático no fim de cada tarefa (sem pedir autorização) explícito no `AGENTS.md` regra 3 e na skill `git-commit-workflow`. |
+| 2026-09-22 | Build da Fase 1 desbloqueado: `TaskEntity` alinhado ao DAO (`@ColumnInfo` `due_date`/`created_at`/`done_at` + campo `doneAt`); schema v1 regenerado (nunca instalado ⇒ sem migração); `RoomTaskRepository` com `Clock` injetado. |
+| 2026-09-22 | DI consolidado: `AppModule` apagado (duplicava `AppClock` com `AppDiModule`), providers unidos num só `AppDiModule`; novo `RepositoryModule` com `@Binds` para `TaskRepository`. |
+| 2026-09-22 | Textos visíveis das tarefas no lugar certo: snackbar como enum `TaskSnackbar` (UI resolve via `AppStrings`) e `contentDescription`/labels sem strings fixas (5 chaves novas ×3 línguas). |
+| 2026-09-22 | Workflow GitHub passou a usar provider gratuito Gemini (`GOOGLE_API_KEY` + model `google/gemini-2.5-flash`) porque o utilizador não tem IA paga. Secret `GOOGLE_API_KEY` adicionado nas Actions settings do repo. |
 
 ## 6. Registo cronológico
 
@@ -106,6 +110,9 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Build da Fase 1 a falhar: Room KSP rejeita as queries do `TaskDao` (colunas snake_case vs schema camelCase). Estado completo documentado no `continuar.txt`. |
 | 2026-09-22 | Otimização anti-conflito dos `.md`: removida a contradição `strings.xml` vs `AppStrings` (AGENTS.md §3.5, PROJECT.md §13, skills `kotlin-compose-android`, `android-daily-planner`, `android-alarms-notifications`, `android-recurring-events-dates`), prefixos de branch alinhados (`feat/`/`exp/` no `git-commit-workflow`), 3 skills em falta criadas, `app-code-organizer` alinhado ao `AGENTS.md` §2, `android-wardrobe-outfits` reescrito com o modelo real (R1–R5/R13). |
 | 2026-09-22 | Workflow GitHub Actions `opencode.yml` criado (manual, porque esta versão do CLI não tem `opencode github install`) + skill `git-commit-workflow` e AGENTS.md regra 3 ajustados: commits no fim de cada tarefa **sem pedir autorização**; só merge/push/tag, apagar branches e operações destrutivas exigem OK explícito. |
+| 2026-09-22 | Limpeza: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano (estado preservado em `PROGRESS.md` e no histórico git); `*.log` adicionado ao `.gitignore`. |
+| 2026-09-22 | Build da Fase 1 desbloqueado: `assembleDebug` + `testDebugUnitTest` + `lintDebug` verdes. Corrigidos `TaskEntity`/`TaskDao` (colunas + duplicado), `RoomTaskRepository` (`doneAt`, `Clock` injetado), `TasksViewModel`/`TasksRoute` (imports, visibilidade, âmbitos), i18n da snackbar/a11y, e DI consolidado. Nota: o JBR do Android Studio desta máquina é Java 25 — o build usa `C:\Program Files\Java\jdk-21`. |
+| 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grátis) — pronto a usar com `/opencode` em issues/PRs. |
 
 ---
 
