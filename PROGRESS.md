@@ -12,8 +12,8 @@
 |---|---|
 | Fase atual | **1 — Tarefas** (em curso 🔶) |
 | Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) |
-| Prioridade imediata | Terminar Fase 1 (CRUD, adiar, undo, estados vazios), testar em dispositivo e push da branch (aguarda OK) |
-| Branch ativa | `feat/fase-1-tarefas` |
+| Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro); depois push/merge (aguarda OK) |
+| Branch ativa | `feat/tasks-crud` |
 
 ## 2. Fases do roadmap
 
@@ -63,19 +63,21 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 **Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
 
-**Fase 1 — Tarefas (em curso 🔶, build desbloqueado)**
+**Fase 1 — Tarefas (em curso 🔶, código + testes concluídos, falta validar em dispositivo)**
 - `feature/tasks/` — `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/Próximas/Sem data/Concluídas; snackbar e `contentDescription` via `AppStrings` (5 chaves novas ×3 línguas) e snackbar do ViewModel como enum `TaskSnackbar` (a UI resolve o texto).
 - Camada Room: `TaskEntity` (`tasks`, colunas `due_date`/`created_at`/`done_at` + campo `doneAt`), `TaskDao` (queries alinhadas ao schema, sem duplicados), `TaskConverters`, `AppDatabase` v1 (`exportSchema=true`, schema `1.json` regenerado — v1 nunca foi instalado, sem migração), `TaskPriorityEntity`.
 - `RoomTaskRepository` (mapeia `doneAt` nos dois sentidos; usa `AppClock` injetado, sem `System.currentTimeMillis()`).
 - DI consolidado: `AppDiModule` único (Room, `AppClock`, `Dispatchers.IO.limitedParallelism(2)`) + `RepositoryModule` (`@Binds` `TaskRepository`); `AppModule` removido (duplicava `AppClock`).
+- Editor de tarefas: `TaskEditRoute.kt` + `TaskEditViewModel.kt` (título, nota, data/hora com pickers, prioridade, guardar, apagar com undo) e rota `task_edit` no `DailyCompanyApp`.
+- Testes unitários (17 testes verdes): `TasksViewModelTest` (quick add, título vazio ignorado, toggle done + undo, adiar + undo, separadores), `TaskEditViewModelTest`, `TaskGroupsTest` (agrupamento Hoje/Próximas/Sem data/Concluídas), `StringsCompletenessTest` (as 3 línguas completas, sem TODO/placeholders) + `MainDispatcherRule`/`FakeTaskRepository`/`FixedClock`.
+- Lint corrigido: `Spacer(Modifier.weight(0f))` → `Spacer(Modifier.width(Spacing.xs))` em `TaskEditRoute` (`:app:lintDebug` verde).
 - Limpeza feita: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano; `*.log` no `.gitignore`.
 
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
-1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, separadores e tema claro/escuro.
-2. Terminar Fase 1 conforme `SCREENS.md` §3 (CRUD completo de tarefas) e adicionar os testes unitários obrigatórios (completude das 3 línguas, `groupTasks`).
-3. Verificação: `:app:assembleDebug` + `:app:testDebugUnitTest` + teste em dispositivo.
-4. Push da branch `feat/fase-1-tarefas` para `origin` (aguarda OK do utilizador) e, no fim da fase, merge para `main`.
+1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade), separadores e tema claro/escuro.
+2. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (17 testes) + `:app:lintDebug` verdes.
+3. Push da branch `feat/tasks-crud` para `origin` (aguarda OK do utilizador — a branch já tem upstream e o commit `6c5a406` do bot com a Fase 1 foi sincronizado; falta o commit do lint fix) e, no fim da fase, merge para `main`.
 
 ## 5. Decisões tomadas recentemente
 
@@ -115,6 +117,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Build da Fase 1 desbloqueado: `assembleDebug` + `testDebugUnitTest` + `lintDebug` verdes. Corrigidos `TaskEntity`/`TaskDao` (colunas + duplicado), `RoomTaskRepository` (`doneAt`, `Clock` injetado), `TasksViewModel`/`TasksRoute` (imports, visibilidade, âmbitos), i18n da snackbar/a11y, e DI consolidado. Nota: o JBR do Android Studio desta máquina é Java 25 — o build usa `C:\Program Files\Java\jdk-21`. |
 | 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grátis) — pronto a usar com `/opencode` em issues/PRs. |
 | 2026-09-22 | Verificada a instalação da GitHub App OpenCode Agent (*All repositories* — o repo fica coberto); `opencode.yml` com `use_github_token: false` para os commits/PRs do bot saírem como `opencode-agent` via token OIDC da app. |
+| 2026-09-22 | Fase 1 concluída em código, commitada e sincronizada em `feat/tasks-crud` (commit `6c5a406` do bot — mensagem só "." por ser commit automático; trabalho completo da fase): CRUD de tarefas com editor (data/hora/prioridade), undo em progredir/adiar/apagar, separadores, testes unitários (17, verdes: Tasks/TaskEdit/groupTasks/completude das 3 línguas). `assembleDebug` + `lintDebug` + `testDebugUnitTest` verdes após corrigir `weight(0f)` num `Spacer` no editor. Falta: teste em dispositivo + OK para push/merge. |
 
 ---
 
