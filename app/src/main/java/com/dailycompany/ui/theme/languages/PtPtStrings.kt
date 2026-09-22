@@ -57,6 +57,11 @@ object PtPtStrings : AppStrings {
     override val tasksOverdue = "Atrasada"
     override val tasksPostponeTomorrow = "Adiar para amanhã"
     override val tasksEmpty = "Sem tarefas. Adiciona a primeira."
+    override val tasksConclude = "Concluir"
+    override val tasksReopen = "Reabrir"
+    override val tasksConcluded = "Concluída"
+    override val tasksReopened = "Reaberta"
+    override val tasksPostponed = "Adiada para amanhã"
     override fun tasksCount(n: Int) = if (n == 1) "1 tarefa" else "$n tarefas"
 
     override val eventsTitle = "Agenda"

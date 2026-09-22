@@ -36,15 +36,17 @@ Create a new branch **before changing code** when the change is any of these:
 
 | Situation | Branch prefix | Example |
 |---|---|---|
-| New feature or screen | `feature/` | `feature/today-screen` |
+| New feature or screen | `feat/` | `feat/today-screen` |
 | Bug fix that touches more than one file or needs investigation | `fix/` | `fix/alarm-not-firing-after-reboot` |
-| Experimental idea, spike, "let's try", uncertain outcome | `experiment/` | `experiment/glance-widget` |
+| Experimental idea, spike, "let's try", uncertain outcome | `exp/` | `exp/glance-widget` |
 | Large refactor, architecture change, package renames | `refactor/` | `refactor/repository-layer` |
 | Dependency, Gradle, AGP, Kotlin, SDK or library upgrades | `chore/` | `chore/update-compose-bom` |
-| Database schema change or migration | `feature/` or `fix/` (mention "db" in the name) | `feature/db-recurring-events` |
+| Database schema change or migration | `feat/` or `fix/` (mention "db" in the name) | `feat/db-recurring-events` |
 | Documentation only | `docs/` | `docs/readme-setup` |
 
 Also branch when **any** of these is true: the change is expected to touch **more than about 5 files or 200 lines**, it could break the build for a while, or you are not sure it will work.
+
+**Project convention (this repo, `AGENTS.md` §5):** use the prefixes `feat/`, `fix/`, `exp/`, `chore/`, `docs/`. Do **not** use `feature/`, `experiment/` or `refactor/` branch names in this repo (existing branches already use `feat/`).
 
 **Trivial changes** (typo, comment, a one-line obvious fix, a single string) may be committed directly on the current branch **if it is not `main`/`master`**. On `main`/`master`, ask the user or create a small `fix/` branch.
 
@@ -55,11 +57,12 @@ Branch rules:
 - **Never delete a branch** and never merge into `main` without the user's explicit OK.
 
 ```bash
-git switch -c feature/today-screen
+git switch -c feat/today-screen
 ```
 
 ## 3. Commit early, in small atomic commits
 
+- **Committing is the default — never ask for permission before committing.** Finish a coherent step (or the task), verify it (section 5), stage explicit paths and commit. Do not end a task leaving work uncommitted "so the user can review first". Exceptions where you MUST stop and ask: the working tree has changes **you did not make** (section 1 case 2), or the only feasible target branch is `main`/`master` (create a branch instead, section 2).
 - **One logical change per commit.** Do not bundle unrelated things (for example a refactor plus a new feature).
 - Commit after each working step (a compiling, coherent unit), not only at the end. Long tasks should produce several commits.
 - Stage explicit paths, then review what will be committed:
@@ -121,20 +124,22 @@ Bad messages (never write these): `update`, `fix`, `changes`, `wip stuff`, `fina
 - [ ] No generated/build files (`build/`, `.gradle/`, `*.apk`, `*.aab`) staged.
 - [ ] Message follows section 4.
 
-Do **not** commit a broken build to a shared/main branch. On an `experiment/` or `wip` branch a non-compiling checkpoint is allowed only if the message starts with `wip:` and the final report says so.
+Do **not** commit a broken build to a shared/main branch. On an `exp/` or `wip` branch a non-compiling checkpoint is allowed only if the message starts with `wip:` and the final report says so.
 Never use `--no-verify` to bypass hooks.
 
 ## 6. Experimental or risky work
 
-1. Create `experiment/<name>` before touching code.
+1. Create `exp/<name>` before touching code.
 2. Commit checkpoints as you go (`wip:` is fine here). Before a risky step (large rename, migration, dependency jump), make a commit first so the previous state is always recoverable.
 3. If the experiment fails, **do not delete it**. Report the outcome and let the user decide; suggest `git switch main` to go back.
 4. If it succeeds, summarize the result and let the user decide how to merge (see section 7).
 
 ## 7. Merging, pushing, history
 
+Committing to the current (feature/experimental) branch **never requires approval** — it is the expected end of every task. The rules below are about **publishing or rewriting** work only.
+
 - **Do not merge, rebase, push, tag or delete branches unless the user explicitly asks.** When work is finished, propose the exact commands and wait.
-- Suggested merge (after user OK): `git switch main`, `git merge --no-ff feature/today-screen`, or squash if the user prefers a clean history.
+- Suggested merge (after user OK): `git switch main`, `git merge --no-ff feat/today-screen`, or squash if the user prefers a clean history.
 - When asked to push: `git push -u origin <branch>`; never `--force`. If a force push seems necessary, stop and explain why; use `--force-with-lease` only if the user explicitly approves.
 - To undo something already shared or committed: use `git revert <hash>` (creates a new commit). `git commit --amend` is allowed **only** for the latest commit you created in this session and only if it was not pushed.
 - Never rewrite history that was pushed.
@@ -175,7 +180,7 @@ At the end of every task, output:
 - Branch name (and whether it was newly created)
 - List of commits: short hash + subject (`git log --oneline -n <count>`)
 - Build/test commands run and results
-- Anything left **uncommitted**, and why
+- Confirm the working tree is clean (`git status --short`). If anything is left **uncommitted**, state what and why — that is the exception, not the norm.
 - Suggested next step (for example the merge command), without executing it
 
 Example final check: run `git status --short` and confirm the working tree is clean, or explain what remains.

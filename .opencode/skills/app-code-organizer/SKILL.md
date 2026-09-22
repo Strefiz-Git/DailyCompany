@@ -10,7 +10,7 @@ Objetivo: cada ficheiro de código tem uma casa óbvia, com nome previsível, e 
 ## Princípios
 
 - **Reorganizar não muda comportamento.** Um commit de organização só move, renomeia e ajusta `package`/imports. Sem lógica nova, sem reformatar ficheiros inteiros, sem renomear API pública por gosto. Assim o diff é revisável e a regressão é improvável.
-- **Agrupar por funcionalidade primeiro, por tipo depois.** `feature/planner/{ui,domain,data}` escala melhor do que `viewmodels/`, `repositories/`, `screens/` com tudo misturado, porque mexer numa funcionalidade toca numa só pasta.
+- **Agrupar por funcionalidade primeiro, por tipo depois.** `feature/planner/{ui,domain,data}` escala melhor do que `viewmodels/`, `repositories/`, `screens/` com tudo misturado, porque mexer numa funcionalidade toca numa só pasta. **Nota para este projeto:** o DailyCompany usa camadas globais + UI por feature (ver `AGENTS.md` §2) — a estrutura-alvo exata está na secção "Estrutura alvo" abaixo.
 - **Respeitar o que já existe.** Se o projeto tem uma arquitetura coerente, seguir essa. Só propor a migração para features quando há 3 ou mais funcionalidades ou quando o utilizador o pede. Num projeto pequeno, camadas simples chegam.
 - **Um ficheiro, uma responsabilidade.** O nome do ficheiro diz o que lá está; se precisas de "e" para o descrever, dividir.
 - **Dependências num só sentido.** `ui → domain ← data`. Uma feature não importa código interno de outra feature: o que for partilhado sobe para `core/`.
@@ -64,49 +64,53 @@ Um commit por lote com mensagem clara (ex.: `refactor: mover ficheiros da featur
 
 ## Android / Kotlin / Compose
 
-### Estrutura alvo (por feature)
+### Estrutura alvo
+
+**Este projeto (DailyCompany) tem layout próprio no `AGENTS.md` §2 — camadas globais + UI por feature.** Usa-o; não apliques o esquema "feature-first puro" abaixo sem confrontar com esse layout.
 
 ```
-app/src/main/java/<package.base>/
-├── App.kt                      # classe Application
-├── MainActivity.kt
-├── navigation/                 # NavHost, rotas, destinos
-├── core/
-│   ├── common/                 # utilitários, extensões, constantes, Result/erros
-│   ├── database/               # Room: AppDatabase, conversores, migrações
-│   ├── network/                # Retrofit/OkHttp, interceptors
-│   ├── datastore/              # preferências
-│   ├── di/                     # módulos Hilt/Koin
-│   ├── notification/           # canais, helpers de notificações e alarmes
-│   └── designsystem/           # tema, cores, tipografia, componentes reutilizáveis
-└── feature/
-    └── <nome-da-feature>/
-        ├── ui/                 # Screen, ViewModel, UiState, componentes locais
-        ├── domain/             # modelos, casos de uso, interface do repositório
-        └── data/               # implementação do repositório, DAO, entity, DTO, mapeadores
+app/src/main/java/com/dailycompany/
+├── DailyApp.kt  MainActivity.kt
+├── core/                    # utils, extensões, Clock, dispatchers, Result
+├── ui/
+│   ├── theme/               # tokens, Theme.kt, Language.kt (+ languages/ = AppStrings)
+│   ├── components/          # componentes partilhados
+│   └── navigation/          # NavHost, rotas, deep links
+├── data/                    # camada global de dados
+│   ├── local/               # Room (entities, daos, converters, migrations) + DataStore
+│   ├── repository/          # implementações de repositórios
+│   ├── image/               # ImageProcessor, ImageStorage
+│   ├── settings/            # SettingsRepository, StringsProvider
+│   └── backup/              # BackupManager (.zip), DTOs, BackupRepository
+├── domain/                  # modelos puros + casos de uso
+│   ├── model/
+│   └── usecase/
+├── feature/                 # um pacote por feature, só com UI de momento
+│   └── <nome>/              # XScreen.kt, XViewModel.kt, XUiState.kt, componentes locais
+└── di/                      # módulos Hilt
 ```
 
-Pastas dentro de `feature/<x>/` só se criam quando têm conteúdo. Uma feature simples pode ter apenas `ui/` e `data/`.
+Para **outros projetos** (sem layout próprio): agrupar por funcionalidade primeiro (`feature/<x>/{ui,domain,data}`) — em projetos pequenos, camadas simples chegam; não impor features antes de haver 3 ou mais funcionalidades.
 
 ### Onde vai cada tipo de ficheiro
 
-| Ficheiro | Local | Nome |
+| Ficheiro | Local (neste projeto) | Nome |
 |---|---|---|
-| Ecrã Compose | `feature/x/ui/` | `XScreen.kt` |
-| Componente usado só nessa feature | `feature/x/ui/components/` | `XCard.kt`, `XDialog.kt` |
-| Componente usado em várias features | `core/designsystem/components/` | `AppButton.kt` |
-| ViewModel | `feature/x/ui/` | `XViewModel.kt` |
-| Estado / eventos do ecrã | `feature/x/ui/` | `XUiState.kt`, `XUiEvent.kt` |
-| Modelo de domínio | `feature/x/domain/model/` | `X.kt` |
-| Caso de uso | `feature/x/domain/usecase/` | `GetXUseCase.kt` |
-| Interface do repositório | `feature/x/domain/` | `XRepository.kt` |
-| Implementação do repositório | `feature/x/data/` | `XRepositoryImpl.kt` |
-| Entity, DAO (Room) | `feature/x/data/local/` | `XEntity.kt`, `XDao.kt` |
-| DTO, API service | `feature/x/data/remote/` | `XDto.kt`, `XApi.kt` |
-| Mapeadores | `feature/x/data/mapper/` | `XMapper.kt` |
-| Worker, alarme, receiver | `feature/x/` ou `core/notification/` | `XWorker.kt`, `XAlarmReceiver.kt` |
-| Tema | `core/designsystem/theme/` | `Color.kt`, `Type.kt`, `Theme.kt` |
-| Extensões | `core/common/extensions/` | `StringExt.kt`, `DateExt.kt` |
+| Ecrã Compose | `feature/x/` | `XScreen.kt` |
+| ViewModel | `feature/x/` | `XViewModel.kt` |
+| Estado / eventos do ecrã | `feature/x/` | `XUiState.kt` |
+| Componente só da feature | `feature/x/components/` | `XCard.kt`, `XDialog.kt` |
+| Componente partilhado | `ui/components/` | `AppButton.kt` |
+| Modelo de domínio puro | `domain/model/` | `X.kt` |
+| Caso de uso | `domain/usecase/` | `GetXUseCase.kt` |
+| Interface do repositório | `domain/` (se aplicável) | `XRepository.kt` |
+| Implementação do repositório | `data/repository/` | `XRepositoryImpl.kt` |
+| Entity, DAO, converter, migração | `data/local/<x>/` | `XEntity.kt`, `XDao.kt`, `XConverters.kt` |
+| DTO/serialização (backup) | `data/backup/` | `XDtos.kt` |
+| Mapeadores | junto do repositório | `XMapper.kt` |
+| Worker, alarme, receiver | `feature/x/` ou `core/` | `XWorker.kt`, `XAlarmReceiver.kt` |
+| Tema e textos | `ui/theme/` (+ `ui/theme/languages/`) | `Color.kt`, `Type.kt`, `Theme.kt`, `Language.kt`, `PtPtStrings.kt`… |
+| Extensões / utils | `core/` | `DateExt.kt`, `Result.kt` |
 
 ### Regras de nomes e tamanho
 
@@ -121,9 +125,9 @@ Pastas dentro de `feature/<x>/` só se criam quando têm conteúdo. Uma feature 
 Os recursos são globais, por isso a organização faz-se pelo **prefixo no nome**:
 
 - Drawables: `ic_` ícones, `img_` imagens, `bg_` fundos; prefixo da feature quando específico (`ic_planner_add`).
-- Strings: `planner_title`, `wardrobe_empty_message`; prefixo da feature evita colisões.
+- Strings: neste projeto vivem em `AppStrings` (Kotlin em `ui/theme/languages/`), **não** em `res/values` — ver skill `android-i18n-theme`. Num projeto com `strings.xml`, usar prefixo da feature (`planner_title`, `wardrobe_empty_message`).
 - Layouts XML (se existirem): `activity_`, `fragment_`, `item_`, `view_`, `dialog_`.
-- Uma pasta `values-pt-rPT` para textos em português europeu; evitar strings escritas diretamente no código.
+- Evitar strings escritas diretamente no código (neste projeto: via `AppStrings`, três línguas).
 - Apagar recursos não usados só depois de confirmar com o lint (*unused resources*), nunca à mão.
 
 ### Armadilhas ao mover ficheiros Android

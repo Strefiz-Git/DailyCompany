@@ -23,13 +23,13 @@ Use with `kotlin-compose-android`, `android-data-offline`, `android-recurring-ev
 ```
 ui/today/        TodayScreen (the daily guide)
 ui/tasks/        TaskList, TaskEditor
-ui/notes/        NoteList, NoteEditor
+ui/notes/        NoteList, NoteEditor   # fora de âmbito neste projeto: não há notas (PROJECT.md §5)
 ui/calendar/     MonthView + DayAgenda (events; uses recurrence skill)
 ui/wardrobe/     Outfit suggestion (see android-wardrobe-outfits)
 ui/settings/     Notifications, theme, backup, defaults
 ```
 
-Navigation: bottom bar with 4 destinations at most (Hoje, Tarefas, Calendario, Mais). Use Navigation Compose type-safe routes.
+Navigation: in this project the bottom bar has 5 destinations (today, tasks, events, wardrobe, outfits) plus full-screen editors — see `SCREENS.md` §1. Use Navigation Compose type-safe routes; never invent top-level destinations (PROJECT.md rule 12).
 
 ## Data model (Room)
 
@@ -51,7 +51,8 @@ Navigation: bottom bar with 4 destinations at most (Hoje, Tarefas, Calendario, M
     val taskId: Long, val text: String, val isDone: Boolean = false, val position: Int = 0,
 )
 
-@Entity data class NoteEntity(
+// Notas NÃO existem neste projeto (PROJECT.md §5 — fora de âmbito). Não criar.
+@Entity data class NoteEntity(   // template genérico de outro projeto — ignorar no DailyCompany
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String, val body: String,
     val updatedAt: Long, val isPinned: Boolean = false,
@@ -100,7 +101,7 @@ data class TodayUiState(
 
 ## Backup and export
 
-- Offer **Export/Import JSON** with the Storage Access Framework (`ActivityResultContracts.CreateDocument("application/json")` / `OpenDocument`), no storage permission needed.
+- Offer **Export/Import** through the Storage Access Framework. **In this project the format is one `.zip` with everything** (domain data + settings + photos) — NOT a bare JSON file. Use the `android-backup-restore` skill; a JSON-only export would violate R13.
 - Serialize with `kotlinx.serialization`; include a `schemaVersion` field. Import must validate and be transactional (all or nothing) and ask before replacing existing data.
 - Do not rely on Android auto-backup alone; state clearly in settings what is backed up.
 - After an import, **reschedule all alarms** (see alarms skill).
@@ -114,6 +115,6 @@ data class TodayUiState(
 
 - [ ] Add, edit, complete, delete (with undo) a task works end to end.
 - [ ] Today screen updates live when data changes and when the day rolls over.
-- [ ] Empty, loading and error states exist; strings in `strings.xml` (PT-PT).
+- [ ] Empty, loading and error states exist; texts via the project's `AppStrings` (three languages, see `android-i18n-theme`).
 - [ ] Unit tests for `TodayUseCase` ordering and for overdue/today logic.
 - [ ] `./gradlew :app:assembleDebug` and unit tests run and results reported.

@@ -12,13 +12,15 @@ Este ficheiro é obrigatório. Lê-o antes de qualquer tarefa e segue-o sempre.
 
 Em caso de conflito, a ordem de autoridade é: pedido explícito do utilizador → `PROJECT.md` → `AGENTS.md` → `DESIGN.md`/`SCREENS.md` → skills.
 
+As skills marcadas `mandatory` são obrigatórias de **carregar**, nunca de se sobreporem aos documentos do projeto. Se uma skill genérica (ex.: um template de outra app) contradisser `PROJECT.md`/`AGENTS.md`/`SCREENS.md`/`DESIGN.md`, vale o documento do projeto — segue-o. Nunca fiques em loop entre duas fontes que se contradizem: decide com esta ordem e avança (e, se for útil, reporta a divergência no resumo final).
+
 ---
 
 ## 1. Regras obrigatórias (sem exceções)
 
 1. **Carrega sempre a skill `kotlin-compose-android`** antes de escrever ou alterar código.
 2. **Carrega também as skills da área da tarefa** (tabela na secção 4). Duas áreas ⇒ duas skills.
-3. **Git: nunca trabalhes sem `git-commit-workflow`.** Commits com descrição, branch para mudanças experimentais ou grandes. Nunca `git push --force` no `main`.
+3. **Git: nunca trabalhes sem `git-commit-workflow`.** Commits com descrição, branch para mudanças experimentais ou grandes. **Commit no fim de cada tarefa sem pedir autorização** (só merge/push/tag, apagar branches e operações destrutivas exigem OK explícito do utilizador). Nunca `git push --force` no `main`.
 4. **Nenhum texto visível escrito à mão num ecrã.** Todos os textos vivem em `ui/theme/languages/` (`PtPtStrings`, `PtBrStrings`, `EnStrings`) através da interface `AppStrings`; nos composables usa-se `strings()`. Chave nova = as três línguas preenchidas. Skill `android-i18n-theme`.
 5. **Código, identificadores, comentários, commits e branches em inglês.** As respostas ao utilizador e a língua de referência da UI são PT-PT.
 6. **Nenhuma cor, tamanho de letra ou raio hardcoded num ecrã.** Só tokens de `ui/theme` (`DESIGN.md`). O tema tem de funcionar em claro e escuro.
@@ -80,7 +82,7 @@ app/src/main/java/com/dailycompany/
 2. `git status`; mudança grande ou experimental ⇒ `git checkout -b feat/<nome>`.
 3. Plano curto se não for trivial.
 4. Implementar: domínio puro primeiro (com testes), depois dados, depois UI.
-5. Strings para `strings.xml`; tokens do tema na UI; componentes reutilizados de `ui/components/`.
+5. Textos visíveis via `AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings` (regra 4 — **nunca** `strings.xml` para texto de ecrãs); tokens do tema na UI; componentes reutilizados de `ui/components/`.
 6. `./gradlew :app:assembleDebug` (+ `testDebugUnitTest`, + `lintDebug` se mexeste em UI/strings).
 7. Commits pequenos e descritivos.
 8. Resumo final: o que mudou · o que foi testado · o que falta validar em dispositivo. Se o estado do projeto mudou, atualizar `PROGRESS.md`.
