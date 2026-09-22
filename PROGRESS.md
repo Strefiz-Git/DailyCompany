@@ -92,6 +92,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Branch `feat/fase-1-tarefas` criada para a Fase 1 (Tarefas). Os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo por engano — pendente de limpeza com aprovação. |
 | 2026-09-22 | Diagnóstico do build: Room KSP "no such column: created_at/done_at/due_date" — as `@Query` do `TaskDao` usam snake_case mas o `TaskEntity` (sem `@ColumnInfo`) gera colunas camelCase (schema v1 confirmado). |
 | 2026-09-22 | Otimização anti-conflito dos docs/skills (decisão desta tarefa): texto de ecrãs só via `AppStrings` (removeu-se a contradição `strings.xml` do AGENTS/PROJECT/skills), prefixos de branch padronizados (`feat/`/`exp/`), criadas as skills em falta `android-hilt-di`, `android-compose-ui-design`, `android-images-media`, ordem de autoridade clarificada no `AGENTS.md`, `app-code-organizer` alinhado à estrutura real, `android-wardrobe-outfits` reescrito com R1–R5/R13. |
+| 2026-09-22 | Adicionado workflow GitHub Actions `opencode.yml` (reage a `/opencode` ou `/oc` em comentários de issues e PRs) — dev tooling, não afeta o offline-first da app. Commit automático no fim de cada tarefa (sem pedir autorização) explícito no `AGENTS.md` regra 3 e na skill `git-commit-workflow`. |
 
 ## 6. Registo cronológico
 
@@ -104,6 +105,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-20 | Fase 0 iniciada: documentação completa, skills prontas, `exemplos/` criado. Sem código Android ainda. |
 | 2026-09-22 | Build da Fase 1 a falhar: Room KSP rejeita as queries do `TaskDao` (colunas snake_case vs schema camelCase). Estado completo documentado no `continuar.txt`. |
 | 2026-09-22 | Otimização anti-conflito dos `.md`: removida a contradição `strings.xml` vs `AppStrings` (AGENTS.md §3.5, PROJECT.md §13, skills `kotlin-compose-android`, `android-daily-planner`, `android-alarms-notifications`, `android-recurring-events-dates`), prefixos de branch alinhados (`feat/`/`exp/` no `git-commit-workflow`), 3 skills em falta criadas, `app-code-organizer` alinhado ao `AGENTS.md` §2, `android-wardrobe-outfits` reescrito com o modelo real (R1–R5/R13). |
+| 2026-09-22 | Workflow GitHub Actions `opencode.yml` criado (manual, porque esta versão do CLI não tem `opencode github install`) + skill `git-commit-workflow` e AGENTS.md regra 3 ajustados: commits no fim de cada tarefa **sem pedir autorização**; só merge/push/tag, apagar branches e operações destrutivas exigem OK explícito. |
 
 ---
 
