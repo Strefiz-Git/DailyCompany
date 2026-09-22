@@ -13,7 +13,7 @@
 | Fase atual | **1 — Tarefas** (em curso 🔶) |
 | Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) |
 | Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro); depois push/merge (aguarda OK) |
-| Branch ativa | `feat/tasks-crud` |
+| Branch ativa | `feat/task-icons` (a partir de `feat/tasks-crud`) |
 
 ## 2. Fases do roadmap
 
@@ -72,12 +72,17 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 - Testes unitários (17 testes verdes): `TasksViewModelTest` (quick add, título vazio ignorado, toggle done + undo, adiar + undo, separadores), `TaskEditViewModelTest`, `TaskGroupsTest` (agrupamento Hoje/Próximas/Sem data/Concluídas), `StringsCompletenessTest` (as 3 línguas completas, sem TODO/placeholders) + `MainDispatcherRule`/`FakeTaskRepository`/`FixedClock`.
 - Lint corrigido: `Spacer(Modifier.weight(0f))` → `Spacer(Modifier.width(Spacing.xs))` em `TaskEditRoute` (`:app:lintDebug` verde).
 - Limpeza feita: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano; `*.log` no `.gitignore`.
+- **Ícone da tarefa (novo, pedido do utilizador):** `TaskIcon` (sealed `Material`/`Emoji`) no domínio com serialização `m:nome`/`e:emoji` (round-trip testado em `TaskIconTest`), campo `icon` em `Task`/`TaskEntity` (coluna `icon` na BD, migração Room **v1→v2**, schema `2.json` gerado), mapper no `RoomTaskRepository`.
+- Seletor de ícone no editor (`IconPicker`): **duas abas** — Ícones Material (14: casa, compras, refeição, ginásio, estudo, trabalho, corrida, saúde, favorito, estrela, calendário, email, telefone, check) e Emojis (16) — em grelha `FlowRow` (alvo 48dp), com opção "Sem ícone"; badge do ícone/emoji na `TaskRow` (decorativo, `contentDescription = null`). Catálogo + `materialIconVector`/`TaskIconBadge` em `feature/tasks/TaskIcons.kt`.
+- Quick-add barra: padding vertical do container `Spacing.sm` → `Spacing.xs` (feedback do utilizador: espaço vertical ~o dobro do necessário).
+- Strings novas (×3 línguas): `tasksFieldIcon`, `tasksIconNone`, `tasksIconTabIcons`, `tasksIconTabEmojis`.
+- Testes: 22 verdes (5 novos: 4 de `TaskIconTest` + 1 de `onIconChange` no editor).
 
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
-1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade), separadores e tema claro/escuro.
-2. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (17 testes) + `:app:lintDebug` verdes.
-3. Push da branch `feat/tasks-crud` para `origin` (aguarda OK do utilizador — a branch já tem upstream e o commit `6c5a406` do bot com a Fase 1 foi sincronizado; falta o commit do lint fix) e, no fim da fase, merge para `main`.
+1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade/**ícone**), separadores, **ícone/emoji na lista**, **padding da quick-add bar** e tema claro/escuro. Nota: com a migração v1→v2, uma instalação existente tem de abrir sem perder dados.
+2. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (22 testes) + `:app:lintDebug` verdes.
+3. Push das branches `feat/tasks-crud` e `feat/task-icons` para `origin` (ambos aguardam OK do utilizador) e, no fim da fase, merge para `main`.
 
 ## 5. Decisões tomadas recentemente
 
@@ -100,6 +105,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Textos visíveis das tarefas no lugar certo: snackbar como enum `TaskSnackbar` (UI resolve via `AppStrings`) e `contentDescription`/labels sem strings fixas (5 chaves novas ×3 línguas). |
 | 2026-09-22 | Workflow GitHub passou a usar provider gratuito Gemini (`GOOGLE_API_KEY` + model `google/gemini-2.5-flash`) porque o utilizador não tem IA paga. Secret `GOOGLE_API_KEY` adicionado nas Actions settings do repo. |
 | 2026-09-22 | GitHub App **OpenCode Agent** já se encontrava instalada e configurada para *All repositories* (cobre o `DailyCompany`). `opencode.yml` passou a `use_github_token: false` (token da app via OIDC) para os commits/PRs do bot aparecerem como `opencode-agent`, em vez de `GITHUB_TOKEN`. |
+| 2026-09-22 | Ícone de tarefa pedido pelo utilizador: tipo `TaskIcon` (Material/Emoji) com serialização estável (`m:`/`e:`) em vez de guardar enum/UI na BD, e migração Room v1→v2 (`ALTER TABLE`) em vez de destruir dados. |
 
 ## 6. Registo cronológico
 
@@ -118,6 +124,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grátis) — pronto a usar com `/opencode` em issues/PRs. |
 | 2026-09-22 | Verificada a instalação da GitHub App OpenCode Agent (*All repositories* — o repo fica coberto); `opencode.yml` com `use_github_token: false` para os commits/PRs do bot saírem como `opencode-agent` via token OIDC da app. |
 | 2026-09-22 | Fase 1 concluída em código, commitada e sincronizada em `feat/tasks-crud` (commit `6c5a406` do bot — mensagem só "." por ser commit automático; trabalho completo da fase): CRUD de tarefas com editor (data/hora/prioridade), undo em progredir/adiar/apagar, separadores, testes unitários (17, verdes: Tasks/TaskEdit/groupTasks/completude das 3 línguas). `assembleDebug` + `lintDebug` + `testDebugUnitTest` verdes após corrigir `weight(0f)` num `Spacer` no editor. Falta: teste em dispositivo + OK para push/merge. |
+| 2026-09-22 | Branch `feat/task-icons` criada (a partir de `feat/tasks-crud`): ícone de tarefa (Ícones Material + Emojis, duas abas no editor, badge na lista, migração Room v1→v2 com `ALTER TABLE tasks ADD COLUMN icon`, `TaskIcon` com round-trip testado) + fix do padding vertical da quick-add barra. 22 testes, `assembleDebug` + `lintDebug` verdes. Falta: teste em dispositivo + OK para push/merge. |
 
 ---
 
