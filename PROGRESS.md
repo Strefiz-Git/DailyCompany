@@ -11,7 +11,7 @@
 | Campo | Valor |
 |---|---|
 | Fase atual | **1 — Tarefas** (em curso 🔶) |
-| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) |
+| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) — **stack atualizado**: Compose BOM 2026.04.01 (ui/foundation/animation 1.11.0, material3 1.4.0, icons 1.7.8), Kotlin 2.3.21, KSP 2.3.12, Room 2.8.4, Hilt 2.58 |
 | Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro); depois push/merge (aguarda OK) |
 | Branch ativa | `feat/task-icons` (a partir de `feat/tasks-crud`) |
 
@@ -82,8 +82,9 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
 1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade/**ícone**), separadores, **ícone/emoji na lista**, **padding da quick-add bar** e tema claro/escuro. Nota: com a migração v1→v2, uma instalação existente tem de abrir sem perder dados.
-2. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (22 testes) + `:app:lintDebug` verdes.
-3. Push das branches `feat/tasks-crud` e `feat/task-icons` para `origin` (ambos aguardam OK do utilizador) e, no fim da fase, merge para `main`.
+2. **Validar visual pós-upgrade do stack** (branch `chore/upgrade-compose-stack`, ainda por fazer em dispositivo): o material3 1.4 mudou cores por omissão — `PrimaryTabRow` (indicador/container primário em vez do `TabRow` neutro antigo) e `NavigationBarItem` (label ativo agora `secondary` em vez de `onSurface`); os ícones `AutoMirrored` devem pintar igual. Se o aspeto não agradar, ajustar tokens no tema.
+3. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (22 testes) + `:app:lintDebug` verdes (com o novo stack).
+4. Push das branches `feat/tasks-crud`, `feat/task-icons` e `chore/upgrade-compose-stack` para `origin` (aguardam OK do utilizador) e, no fim da fase, merge para `main`.
 
 ## 5. Decisões tomadas recentemente
 
@@ -127,6 +128,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Fase 1 concluída em código, commitada e sincronizada em `feat/tasks-crud` (commit `6c5a406` do bot — mensagem só "." por ser commit automático; trabalho completo da fase): CRUD de tarefas com editor (data/hora/prioridade), undo em progredir/adiar/apagar, separadores, testes unitários (17, verdes: Tasks/TaskEdit/groupTasks/completude das 3 línguas). `assembleDebug` + `lintDebug` + `testDebugUnitTest` verdes após corrigir `weight(0f)` num `Spacer` no editor. Falta: teste em dispositivo + OK para push/merge. |
 | 2026-09-22 | Branch `feat/task-icons` criada (a partir de `feat/tasks-crud`): ícone de tarefa (Ícones Material + Emojis, duas abas no editor, badge na lista, migração Room v1→v2 com `ALTER TABLE tasks ADD COLUMN icon`, `TaskIcon` com round-trip testado) + fix do padding vertical da quick-add barra. 22 testes, `assembleDebug` + `lintDebug` verdes. Falta: teste em dispositivo + OK para push/merge. |
 | 2026-09-22 | Feedback de inspeção na aba Tarefas: (1) quick-add barra com vão vazio por baixo do campo — removido o `navigationBarsPadding()` interno (a `NavigationBar` da app já cobre o inset do sistema); `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes. (2) Aviso do Android Studio: `compose.ui:ui` resolvido para **1.9.2** por elevação transitiva do `lifecycle` 2.10.0 (pede Compose 1.9.x), acima do BOM 2024.09.00 (1.7.0) — sugestão de upgrade para 1.11.0; decisão pendente do utilizador (mudança de build grande). |
+| 2026-09-22 | Upgrade do stack (aprovado pelo utilizador, branch `chore/upgrade-compose-stack`): **Compose BOM 2026.04.01** (ui/foundation/animation/material3 1.11.0/1.4.0 — resolve o aviso do Studio, `ui` deixa de ser 1.9.2 transitiva), **Kotlin 2.3.21** + **KSP 2.3.12**, **Room 2.8.4** (KSP2-safe), **Hilt 2.58** (última linha compatível com AGP 8.x e com o fix de metadata Kotlin 2.3; a 2.59+ exige AGP 9). Migrações de código exigidas: `kotlinOptions` → DSL `compilerOptions` (erro no Kotlin 2.3), `TabRow` → `PrimaryTabRow` (deprecated no material3 1.4), `Icons.Outlined.DirectionsRun` → variante `AutoMirrored`, `!!` desnecessário removido, `@param:ApplicationContext` (KT-73255). `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes sem avisos. Falta: validar visual em dispositivo. |
 
 ---
 
