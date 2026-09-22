@@ -74,7 +74,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 - Limpeza feita: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano; `*.log` no `.gitignore`.
 - **Ícone da tarefa (novo, pedido do utilizador):** `TaskIcon` (sealed `Material`/`Emoji`) no domínio com serialização `m:nome`/`e:emoji` (round-trip testado em `TaskIconTest`), campo `icon` em `Task`/`TaskEntity` (coluna `icon` na BD, migração Room **v1→v2**, schema `2.json` gerado), mapper no `RoomTaskRepository`.
 - Seletor de ícone no editor (`IconPicker`): **duas abas** — Ícones Material (14: casa, compras, refeição, ginásio, estudo, trabalho, corrida, saúde, favorito, estrela, calendário, email, telefone, check) e Emojis (16) — em grelha `FlowRow` (alvo 48dp), com opção "Sem ícone"; badge do ícone/emoji na `TaskRow` (decorativo, `contentDescription = null`). Catálogo + `materialIconVector`/`TaskIconBadge` em `feature/tasks/TaskIcons.kt`.
-- Quick-add barra: padding vertical do container `Spacing.sm` → `Spacing.xs` (feedback do utilizador: espaço vertical ~o dobro do necessário).
+- Quick-add barra: **correção de layout** — estava composta *fora* do `Scaffold` como irmã sem container, pelo que era sobreposta **no topo do ecrã** (tapava as tabs) e os `navigationBarsPadding`/`imePadding` inflavam-lhe a altura; passou para `bottomBar` do Scaffold (fixa no fundo, com o espaço reservado ao conteúdo). Padding vertical mantido em `Spacing.xs` (antes `sm`).
 - Strings novas (×3 línguas): `tasksFieldIcon`, `tasksIconNone`, `tasksIconTabIcons`, `tasksIconTabEmojis`.
 - Testes: 22 verdes (5 novos: 4 de `TaskIconTest` + 1 de `onIconChange` no editor).
 

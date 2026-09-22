@@ -133,6 +133,18 @@ fun TasksScreen(
                 elevation = FloatingActionButtonDefaults.elevation(2.dp),
             )
         },
+        bottomBar = {
+            QuickAddBar(
+                value = quickAddText,
+                onValueChange = { quickAddText = it },
+                onSubmit = {
+                    viewModel.quickAdd(quickAddText)
+                    quickAddText = ""
+                },
+                hint = s.tasksQuickAddHint,
+                sendLabel = s.actionAdd,
+            )
+        },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             TabRow(
@@ -175,17 +187,6 @@ fun TasksScreen(
             }
         }
     }
-
-    QuickAddBar(
-        value = quickAddText,
-        onValueChange = { quickAddText = it },
-        onSubmit = {
-            viewModel.quickAdd(quickAddText)
-            quickAddText = ""
-        },
-        hint = s.tasksQuickAddHint,
-        sendLabel = s.actionAdd,
-    )
 }
 
 /** Barra fixa no fundo: campo de texto + enviar, cria com título só. */
