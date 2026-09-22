@@ -1,5 +1,6 @@
 package com.dailycompany.ui.components
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import com.dailycompany.ui.theme.strings
 
 /** Barra superior de um ecrã de topo, com menu ⋮ do qual se chega às Definições. */
@@ -28,6 +30,7 @@ fun TopAppBarWithSettings(
 
     TopAppBar(
         title = { Text(text = title) },
+        windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         actions = {
             IconButton(onClick = { menuOpen = true }) {
                 Icon(
