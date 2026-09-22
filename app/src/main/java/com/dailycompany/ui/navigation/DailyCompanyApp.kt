@@ -22,9 +22,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.dailycompany.feature.events.EventsRoute
 import com.dailycompany.feature.outfits.OutfitsRoute
 import com.dailycompany.feature.settings.SettingsRoute
+import com.dailycompany.feature.tasks.TaskEditRoute
 import com.dailycompany.feature.tasks.TasksRoute
 import com.dailycompany.feature.today.TodayRoute
 import com.dailycompany.feature.wardrobe.WardrobeRoute
@@ -33,6 +36,7 @@ import com.dailycompany.ui.theme.strings
 object Routes {
     const val TODAY = "today"
     const val TASKS = "tasks"
+    const val TASK_EDIT = "task_edit?taskId={taskId}"
     const val EVENTS = "events"
     const val WARDROBE = "wardrobe"
     const val OUTFITS = "outfits"
@@ -108,7 +112,22 @@ fun DailyCompanyApp() {
                 TodayRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
             }
             composable(Routes.TASKS) {
-                TasksRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
+                TasksRoute(
+                    onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
+                    onCreateTask = { navController.navigate("task_edit") },
+                    onOpenTask = { taskId -> navController.navigate("task_edit?taskId=$taskId") },
+                )
+            }
+            composable(
+                route = Routes.TASK_EDIT,
+                arguments = listOf(
+                    navArgument("taskId") {
+                        type = NavType.LongType
+                        defaultValue = 0L
+                    },
+                ),
+            ) {
+                TaskEditRoute(onBack = { navController.navigateUp() })
             }
             composable(Routes.EVENTS) {
                 EventsRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })

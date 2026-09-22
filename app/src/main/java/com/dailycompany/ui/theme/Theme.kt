@@ -199,6 +199,8 @@ interface AppStrings {
     val tasksTabNoDate: String
     val tasksTabDone: String
     val tasksNewTitle: String
+    val tasksEditTitle: String
+    val tasksQuickAddHint: String
     val tasksFieldTitle: String
     val tasksFieldNote: String
     val tasksFieldDate: String
@@ -210,11 +212,16 @@ interface AppStrings {
     val tasksOverdue: String
     val tasksPostponeTomorrow: String
     val tasksEmpty: String
+    val tasksEmptyToday: String
+    val tasksEmptyUpcoming: String
+    val tasksEmptyNoDate: String
+    val tasksEmptyDone: String
     val tasksConclude: String
     val tasksReopen: String
     val tasksConcluded: String
     val tasksReopened: String
     val tasksPostponed: String
+    val tasksDeleted: String
     fun tasksCount(n: Int): String
 
     // ---- Eventos ----
