@@ -62,6 +62,7 @@ git switch -c feat/today-screen
 
 ## 3. Commit early, in small atomic commits
 
+- **Committing is the default — never ask for permission before committing.** Finish a coherent step (or the task), verify it (section 5), stage explicit paths and commit. Do not end a task leaving work uncommitted "so the user can review first". Exceptions where you MUST stop and ask: the working tree has changes **you did not make** (section 1 case 2), or the only feasible target branch is `main`/`master` (create a branch instead, section 2).
 - **One logical change per commit.** Do not bundle unrelated things (for example a refactor plus a new feature).
 - Commit after each working step (a compiling, coherent unit), not only at the end. Long tasks should produce several commits.
 - Stage explicit paths, then review what will be committed:
@@ -135,6 +136,8 @@ Never use `--no-verify` to bypass hooks.
 
 ## 7. Merging, pushing, history
 
+Committing to the current (feature/experimental) branch **never requires approval** — it is the expected end of every task. The rules below are about **publishing or rewriting** work only.
+
 - **Do not merge, rebase, push, tag or delete branches unless the user explicitly asks.** When work is finished, propose the exact commands and wait.
 - Suggested merge (after user OK): `git switch main`, `git merge --no-ff feat/today-screen`, or squash if the user prefers a clean history.
 - When asked to push: `git push -u origin <branch>`; never `--force`. If a force push seems necessary, stop and explain why; use `--force-with-lease` only if the user explicitly approves.
@@ -177,7 +180,7 @@ At the end of every task, output:
 - Branch name (and whether it was newly created)
 - List of commits: short hash + subject (`git log --oneline -n <count>`)
 - Build/test commands run and results
-- Anything left **uncommitted**, and why
+- Confirm the working tree is clean (`git status --short`). If anything is left **uncommitted**, state what and why — that is the exception, not the norm.
 - Suggested next step (for example the merge command), without executing it
 
 Example final check: run `git status --short` and confirm the working tree is clean, or explain what remains.

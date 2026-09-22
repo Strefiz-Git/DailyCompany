@@ -20,7 +20,7 @@ As skills marcadas `mandatory` são obrigatórias de **carregar**, nunca de se s
 
 1. **Carrega sempre a skill `kotlin-compose-android`** antes de escrever ou alterar código.
 2. **Carrega também as skills da área da tarefa** (tabela na secção 4). Duas áreas ⇒ duas skills.
-3. **Git: nunca trabalhes sem `git-commit-workflow`.** Commits com descrição, branch para mudanças experimentais ou grandes. Nunca `git push --force` no `main`.
+3. **Git: nunca trabalhes sem `git-commit-workflow`.** Commits com descrição, branch para mudanças experimentais ou grandes. **Commit no fim de cada tarefa sem pedir autorização** (só merge/push/tag, apagar branches e operações destrutivas exigem OK explícito do utilizador). Nunca `git push --force` no `main`.
 4. **Nenhum texto visível escrito à mão num ecrã.** Todos os textos vivem em `ui/theme/languages/` (`PtPtStrings`, `PtBrStrings`, `EnStrings`) através da interface `AppStrings`; nos composables usa-se `strings()`. Chave nova = as três línguas preenchidas. Skill `android-i18n-theme`.
 5. **Código, identificadores, comentários, commits e branches em inglês.** As respostas ao utilizador e a língua de referência da UI são PT-PT.
 6. **Nenhuma cor, tamanho de letra ou raio hardcoded num ecrã.** Só tokens de `ui/theme` (`DESIGN.md`). O tema tem de funcionar em claro e escuro.
