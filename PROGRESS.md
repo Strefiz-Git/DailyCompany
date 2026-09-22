@@ -12,8 +12,8 @@
 |---|---|
 | Fase atual | **1 — Tarefas** (em curso 🔶) |
 | Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) — **stack atualizado**: Compose BOM 2026.04.01 (ui/foundation/animation 1.11.0, material3 1.4.0, icons 1.7.8), Kotlin 2.3.21, KSP 2.3.12, Room 2.8.4, Hilt 2.58 |
-| Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro); depois push/merge (aguarda OK) |
-| Branch ativa | `feat/task-icons` (a partir de `feat/tasks-crud`) |
+| Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro, **topbar sem faixa vazia, altura da quick-add**); depois push/merge (aguarda OK) |
+| Branch ativa | `chore/upgrade-compose-stack` |
 
 ## 2. Fases do roadmap
 
@@ -76,12 +76,13 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 - Seletor de ícone no editor (`IconPicker`): **duas abas** — Ícones Material (14: casa, compras, refeição, ginásio, estudo, trabalho, corrida, saúde, favorito, estrela, calendário, email, telefone, check) e Emojis (16) — em grelha `FlowRow` (alvo 48dp), com opção "Sem ícone"; badge do ícone/emoji na `TaskRow` (decorativo, `contentDescription = null`). Catálogo + `materialIconVector`/`TaskIconBadge` em `feature/tasks/TaskIcons.kt`.
 - Quick-add barra: **correção de layout** — estava composta *fora* do `Scaffold` como irmã sem container, pelo que era sobreposta **no topo do ecrã** (tapava as tabs) e os `navigationBarsPadding`/`imePadding` inflavam-lhe a altura; passou para `bottomBar` do Scaffold (fixa no fundo, com o espaço reservado ao conteúdo). Padding vertical mantido em `Spacing.xs` (antes `sm`).
 - Quick-add barra (2.ª correção, feedback de inspeção): removido o `navigationBarsPadding()` interno — a barra está acima da `NavigationBar` da app, que já cobre o inset de navegação do sistema; o padding manual criava um vão vazio por baixo do campo (ficava encostado ao topo, com espaço antes da barra inferior). Mantido o `imePadding()` para subir com o teclado.
+- Feedback de inspeção (3.ª ronda): (a) **topbar com faixa vazia em cima do título/⋮** — edge-to-edge + `Scaffold` externo já consomem a status bar (`innerPadding`), mas as `TopAppBar` internas reaplicavam `statusBars` por omissão; fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings` (5 ecrãs), `TaskEditRoute` e `SettingsRoute`. (b) **quick-add com altura a mais/falta de respiro** — padding vertical `Spacing.xs` → `Spacing.sm`, conteúdo mantém-se centrado na horizontal e vertical.
 - Strings novas (×3 línguas): `tasksFieldIcon`, `tasksIconNone`, `tasksIconTabIcons`, `tasksIconTabEmojis`.
 - Testes: 22 verdes (5 novos: 4 de `TaskIconTest` + 1 de `onIconChange` no editor).
 
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
-1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade/**ícone**), separadores, **ícone/emoji na lista**, **padding da quick-add bar** e tema claro/escuro. Nota: com a migração v1→v2, uma instalação existente tem de abrir sem perder dados.
+1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade/**ícone**), separadores, **ícone/emoji na lista**, **padding/altura da quick-add bar**, **topbar sem faixa vazia por cima do título e do ⋮** e tema claro/escuro. Nota: com a migração v1→v2, uma instalação existente tem de abrir sem perder dados.
 2. **Validar visual pós-upgrade do stack** (branch `chore/upgrade-compose-stack`, ainda por fazer em dispositivo): o material3 1.4 mudou cores por omissão — `PrimaryTabRow` (indicador/container primário em vez do `TabRow` neutro antigo) e `NavigationBarItem` (label ativo agora `secondary` em vez de `onSurface`); os ícones `AutoMirrored` devem pintar igual. Se o aspeto não agradar, ajustar tokens no tema.
 3. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (22 testes) + `:app:lintDebug` verdes (com o novo stack).
 4. Push das branches `feat/tasks-crud`, `feat/task-icons` e `chore/upgrade-compose-stack` para `origin` (aguardam OK do utilizador) e, no fim da fase, merge para `main`.
@@ -129,6 +130,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Branch `feat/task-icons` criada (a partir de `feat/tasks-crud`): ícone de tarefa (Ícones Material + Emojis, duas abas no editor, badge na lista, migração Room v1→v2 com `ALTER TABLE tasks ADD COLUMN icon`, `TaskIcon` com round-trip testado) + fix do padding vertical da quick-add barra. 22 testes, `assembleDebug` + `lintDebug` verdes. Falta: teste em dispositivo + OK para push/merge. |
 | 2026-09-22 | Feedback de inspeção na aba Tarefas: (1) quick-add barra com vão vazio por baixo do campo — removido o `navigationBarsPadding()` interno (a `NavigationBar` da app já cobre o inset do sistema); `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes. (2) Aviso do Android Studio: `compose.ui:ui` resolvido para **1.9.2** por elevação transitiva do `lifecycle` 2.10.0 (pede Compose 1.9.x), acima do BOM 2024.09.00 (1.7.0) — sugestão de upgrade para 1.11.0; decisão pendente do utilizador (mudança de build grande). |
 | 2026-09-22 | Upgrade do stack (aprovado pelo utilizador, branch `chore/upgrade-compose-stack`): **Compose BOM 2026.04.01** (ui/foundation/animation/material3 1.11.0/1.4.0 — resolve o aviso do Studio, `ui` deixa de ser 1.9.2 transitiva), **Kotlin 2.3.21** + **KSP 2.3.12**, **Room 2.8.4** (KSP2-safe), **Hilt 2.58** (última linha compatível com AGP 8.x e com o fix de metadata Kotlin 2.3; a 2.59+ exige AGP 9). Migrações de código exigidas: `kotlinOptions` → DSL `compilerOptions` (erro no Kotlin 2.3), `TabRow` → `PrimaryTabRow` (deprecated no material3 1.4), `Icons.Outlined.DirectionsRun` → variante `AutoMirrored`, `!!` desnecessário removido, `@param:ApplicationContext` (KT-73255). `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes sem avisos. Falta: validar visual em dispositivo. |
+| 2026-09-22 | Feedback de inspeção (3.ª ronda, branch `chore/upgrade-compose-stack`): **topbar** com faixa vazia em cima do título/⋮ (edge-to-edge: `Scaffold` externo já consome a status bar; `TopAppBar` internas reaplicavam `statusBars` — fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings`, `TaskEditRoute` e `SettingsRoute`) e **quick-add** com altura aumentada (`Spacing.xs` → `sm`, conteúdo centrado). `assembleDebug` + `lintDebug` verdes. Falta revalidar em dispositivo. |
 
 ---
 
