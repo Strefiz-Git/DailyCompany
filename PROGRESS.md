@@ -97,6 +97,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | DI consolidado: `AppModule` apagado (duplicava `AppClock` com `AppDiModule`), providers unidos num só `AppDiModule`; novo `RepositoryModule` com `@Binds` para `TaskRepository`. |
 | 2026-09-22 | Textos visíveis das tarefas no lugar certo: snackbar como enum `TaskSnackbar` (UI resolve via `AppStrings`) e `contentDescription`/labels sem strings fixas (5 chaves novas ×3 línguas). |
 | 2026-09-22 | Workflow GitHub passou a usar provider gratuito Gemini (`GOOGLE_API_KEY` + model `google/gemini-2.5-flash`) porque o utilizador não tem IA paga. Secret `GOOGLE_API_KEY` adicionado nas Actions settings do repo. |
+| 2026-09-22 | GitHub App **OpenCode Agent** já se encontrava instalada e configurada para *All repositories* (cobre o `DailyCompany`). `opencode.yml` passou a `use_github_token: false` (token da app via OIDC) para os commits/PRs do bot aparecerem como `opencode-agent`, em vez de `GITHUB_TOKEN`. |
 
 ## 6. Registo cronológico
 
@@ -113,6 +114,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Limpeza: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano (estado preservado em `PROGRESS.md` e no histórico git); `*.log` adicionado ao `.gitignore`. |
 | 2026-09-22 | Build da Fase 1 desbloqueado: `assembleDebug` + `testDebugUnitTest` + `lintDebug` verdes. Corrigidos `TaskEntity`/`TaskDao` (colunas + duplicado), `RoomTaskRepository` (`doneAt`, `Clock` injetado), `TasksViewModel`/`TasksRoute` (imports, visibilidade, âmbitos), i18n da snackbar/a11y, e DI consolidado. Nota: o JBR do Android Studio desta máquina é Java 25 — o build usa `C:\Program Files\Java\jdk-21`. |
 | 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grátis) — pronto a usar com `/opencode` em issues/PRs. |
+| 2026-09-22 | Verificada a instalação da GitHub App OpenCode Agent (*All repositories* — o repo fica coberto); `opencode.yml` com `use_github_token: false` para os commits/PRs do bot saírem como `opencode-agent` via token OIDC da app. |
 
 ---
 

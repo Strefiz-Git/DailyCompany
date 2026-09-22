@@ -34,7 +34,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           model: google/gemini-2.5-flash
-          use_github_token: true
+          # use_github_token=false (default): the action exchanges OIDC for an
+          # OpenCode App installation token, so commits/PRs appear as the
+          # opencode-agent app (installed for all repos on this account).
+          # Set to true only to force commits as the GITHUB_TOKEN actor.
+          use_github_token: false
           # share: true
           # prompt: |
           #   Optional custom prompt overriding the default behaviour.
