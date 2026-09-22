@@ -29,9 +29,9 @@ As apps de tarefas não sabem nada da tua roupa. As apps de guarda-roupa não sa
 4. **Uma mão, três segundos.** As ações do dia-a-dia estão ao alcance do polegar.
 5. **Nunca um beco sem saída.** Toda a lista vazia explica o que fazer e oferece a ação.
 6. **Em três línguas, à escolha.** pt-PT (referência), pt-BR e inglês, e tema claro/escuro — trocados na hora, sem reiniciar a app.
-6. **Regras, não IA.** As sugestões são determinísticas, explicáveis e testáveis.
-7. **Calma.** Sem gamificação, sem streaks, sem culpa por não cumprir. Adiar é uma ação de primeira classe.
-8. **Zero fricção na entrada.** Abre e usa. Nada de onboarding obrigatório com 8 passos.
+7. **Regras, não IA.** As sugestões são determinísticas, explicáveis e testáveis.
+8. **Calma.** Sem gamificação, sem streaks, sem culpa por não cumprir. Adiar é uma ação de primeira classe.
+9. **Zero fricção na entrada.** Abre e usa. Nada de onboarding obrigatório com 8 passos.
 
 ## 5. Não-objetivos (fora de âmbito)
 
@@ -210,7 +210,7 @@ Cada fase acaba com: compila · testes passam · commit na branch própria · me
 
 ## 13. Qualidade — definição de "feito"
 
-Uma funcionalidade só está feita quando: compila · tem testes da lógica pura · tem estados Loading/Content/Empty/Error · textos em `strings.xml` · funciona em claro e escuro · funciona a 200% de escala de texto · tem `contentDescription` no que interessa · apagar tem Anular · foi testada (ou ficou explicitamente declarado o que não foi testado em dispositivo).
+Uma funcionalidade só está feita quando: compila · tem testes da lógica pura · tem estados Loading/Content/Empty/Error · textos via `AppStrings` nas três línguas · funciona em claro e escuro · funciona a 200% de escala de texto · tem `contentDescription` no que interessa · apagar tem Anular · foi testada (ou ficou explicitamente declarado o que não foi testado em dispositivo).
 
 ## 14. Riscos e como os mitigar
 
