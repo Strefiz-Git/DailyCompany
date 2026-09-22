@@ -39,7 +39,7 @@ fun groupTasks(tasks: List<Task>, today: LocalDate): TaskGroups {
         when {
             task.done -> done.add(task)
             task.dueDate == null -> noDate.add(task)
-            task.dueDate!! < today -> overdue.add(task)
+            task.dueDate < today -> overdue.add(task)
             task.dueDate == today -> todayList.add(task)
             else -> upcoming.add(task)
         }

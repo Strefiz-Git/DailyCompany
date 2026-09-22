@@ -2,9 +2,9 @@ package com.dailycompany.feature.tasks
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.DirectionsRun
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FitnessCenter
@@ -74,7 +74,7 @@ fun materialIconVector(name: String): ImageVector = when (name) {
     "fitness_center" -> Icons.Outlined.FitnessCenter
     "school" -> Icons.Outlined.School
     "work" -> Icons.Outlined.Work
-    "directions_run" -> Icons.Outlined.DirectionsRun
+    "directions_run" -> Icons.AutoMirrored.Outlined.DirectionsRun
     "local_hospital" -> Icons.Outlined.LocalHospital
     "favorite" -> Icons.Outlined.Favorite
     "star" -> Icons.Outlined.Star
