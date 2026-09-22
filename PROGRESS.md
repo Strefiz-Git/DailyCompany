@@ -10,10 +10,10 @@
 
 | Campo | Valor |
 |---|---|
-| Fase atual | **0 — Fundações** (concluída — falta commit/merge) |
-| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ |
-| Prioridade imediata | Commit da Fase 0 em branch própria e merge para `main` |
-| Branch ativa | `main` |
+| Fase atual | **1 — Tarefas** (em curso 🔶) |
+| Build | `:app:assembleDebug` ✗ (falha no Room KSP — colunas do DAO vs schema; causa identificada) · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ |
+| Prioridade imediata | Corrigir `TaskEntity`/`TaskDao` (alinhar colunas) e voltar a compilar |
+| Branch ativa | `feat/fase-1-tarefas` |
 
 ## 2. Fases do roadmap
 
@@ -21,8 +21,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 | Fase | Objetivo | Estado | Pronto quando |
 |---|---|---|---|
-| **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | 🔵 concluída | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
-| **1 — Tarefas** | CRUD, Hoje básico, adiar, undo, estados vazios | ⚪ não iniciada | Consigo gerir um dia inteiro só com tarefas |
+| **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | ✅ concluída | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
+| **1 — Tarefas** | CRUD, Hoje básico, adiar, undo, estados vazios | 🔶 em curso | Consigo gerir um dia inteiro só com tarefas |
 | **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada + lista e calendário | ⚪ não iniciada | Aniversário anual e consulta a 3 meses funcionam |
 | **3 — Lembretes e alarmes** | AlarmManager, notificações com ações, permissões, boot receiver | ⚪ não iniciada | Alarme toca; sobrevive a reinício |
 | **4 — Guarda-roupa** | Fotos (picker/câmara/EXIF/thumbnails), peça completa, grelha, filtros, pesquisa, categorias editáveis | ⚪ não iniciada | 30 peças catalogadas sem lentidão |
@@ -63,11 +63,19 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 
 **Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
 
+**Fase 1 — Tarefas (em curso 🔶)**
+- `feature/tasks/` — `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/Próximas/Sem data/Concluídas.
+- Camada Room: `TaskEntity` (`tasks`), `TaskDao` (queries + `markDone`/`markNotDone`/`setDueDate`), `TaskConverters` (`LocalDate`/`LocalTime`/`TaskPriorityEntity`), `AppDatabase` v1 (`exportSchema=true`, schema `1.json` exportado), `TaskPriorityEntity` (`NONE`/`MEDIUM`/`HIGH`).
+- `RoomTaskRepository` (concluir/adiar), `AppDiModule` (dispatchers: `Dispatchers.IO.asLimitedParallelism(2)` + qualifiers).
+- **Bloqueio do build:** Room KSP falha — as `@Query` do `TaskDao` usam colunas snake_case (`created_at`, `done_at`, `due_date`) mas o `TaskEntity` sem `@ColumnInfo` gera colunas camelCase (schema v1). Próximo passo: alinhar.
+- **Pendência de limpeza:** os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo — remover com aprovação do utilizador.
+
 ## 4. Próximo passo (Fase 1 — Tarefas)
 
-1. Commit da Fase 0 em branch `feat/fase-0-fundacoes` e merge para `main`.
-2. Fase 1: domínio `Task` puro + testes, Room (`TaskEntity`/`TaskDao`), CRUD, `TaskViewModel`, ecrã `tasks` com separadores Hoje/Próximas/Sem data/Concluídas, adiar, undo (Snackbar).
+1. **Desbloquear o build:** alinhar `TaskEntity.kt` (adicionar `@ColumnInfo` snake_case e o campo `doneAt`) ou as queries do `TaskDao` ao schema v1 (camelCase); `RoomTaskRepository.setDone` passa a chamar `markDone(id)`/`markNotDone(id)`. Rebuild `:app:assembleDebug`.
+2. Terminar Fase 1: CRUD completo, adiar, undo (Snackbar ≥5 s), estados vazios; ecrã `tasks` conforme `SCREENS.md` §3.
 3. Verificação: `:app:assembleDebug` + `:app:testDebugUnitTest` + teste em dispositivo.
+4. Limpeza do repo (pendente de aprovação): remover os ficheiros de debug (`.log`/`.txt` da raiz) e os commits "." desnecessários.
 
 ## 5. Decisões tomadas recentemente
 
@@ -81,6 +89,9 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-20 | `DailyCompanyTheme` deixou de substituir `LocalContext` por `createConfigurationContext(...)`: causava `IllegalStateException: Expected an activity context ...` no `hiltViewModel()` do ecrã Definições. O locale passa por `LocalConfiguration` + `LocalAppLocale`. |
 | 2026-09-20 | Skills `project-folder-organizer` e `app-code-organizer` adicionadas; `check_structure.py` movido para a skill. |
 | 2026-09-20 | Criação do `AGENTS.md` com a regra de carregar `kotlin-compose-android` em qualquer tarefa de código. |
+| 2026-09-22 | Branch `feat/fase-1-tarefas` criada para a Fase 1 (Tarefas). Os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo por engano — pendente de limpeza com aprovação. |
+| 2026-09-22 | Diagnóstico do build: Room KSP "no such column: created_at/done_at/due_date" — as `@Query` do `TaskDao` usam snake_case mas o `TaskEntity` (sem `@ColumnInfo`) gera colunas camelCase (schema v1 confirmado). |
+| 2026-09-22 | Otimização anti-conflito dos docs/skills (decisão desta tarefa): texto de ecrãs só via `AppStrings` (removeu-se a contradição `strings.xml` do AGENTS/PROJECT/skills), prefixos de branch padronizados (`feat/`/`exp/`), criadas as skills em falta `android-hilt-di`, `android-compose-ui-design`, `android-images-media`, ordem de autoridade clarificada no `AGENTS.md`, `app-code-organizer` alinhado à estrutura real, `android-wardrobe-outfits` reescrito com R1–R5/R13. |
 
 ## 6. Registo cronológico
 
@@ -91,6 +102,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-20 | Corrigido crash ao abrir Definições: o tema substituía `LocalContext` por um contexto sem Activity, partindo o `hiltViewModel()`. Removido o override; build + testes + lint verdes. Falta revalidar em dispositivo. |
 | 2026-09-20 | Fase 0: scaffold movido para a raiz, package `com.dailycompany`, Hilt/DataStore/Navigation/splash adicionados, tema claro/escuro com tokens do DESIGN.md, 3 línguas completas, navegação com 5 ecrãs vazios. Build + testes + lint verdes. |
 | 2026-09-20 | Fase 0 iniciada: documentação completa, skills prontas, `exemplos/` criado. Sem código Android ainda. |
+| 2026-09-22 | Build da Fase 1 a falhar: Room KSP rejeita as queries do `TaskDao` (colunas snake_case vs schema camelCase). Estado completo documentado no `continuar.txt`. |
+| 2026-09-22 | Otimização anti-conflito dos `.md`: removida a contradição `strings.xml` vs `AppStrings` (AGENTS.md §3.5, PROJECT.md §13, skills `kotlin-compose-android`, `android-daily-planner`, `android-alarms-notifications`, `android-recurring-events-dates`), prefixos de branch alinhados (`feat/`/`exp/` no `git-commit-workflow`), 3 skills em falta criadas, `app-code-organizer` alinhado ao `AGENTS.md` §2, `android-wardrobe-outfits` reescrito com o modelo real (R1–R5/R13). |
 
 ---
 
