@@ -1,4 +1,0 @@
-e: com/dailycompany/data/repository/RoomTaskRe
-e: com/dailycompany/di/AppDiModule.kt:42:69 
-e: com/dailycompany/ui/navigation/DailyCompany
-e: com/dailycompany/ui/navigation/DailyCompany

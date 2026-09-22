@@ -1,5 +1,0 @@
-=== DISTRIBUIÇÃO (compacta) ===
-data/repository/RoomTaskRe
-di/AppDiModule.kt:42:69 
-ui/navigation/DailyCompany
-ui/navigation/DailyCompany
