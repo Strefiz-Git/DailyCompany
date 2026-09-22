@@ -210,6 +210,11 @@ interface AppStrings {
     val tasksOverdue: String
     val tasksPostponeTomorrow: String
     val tasksEmpty: String
+    val tasksConclude: String
+    val tasksReopen: String
+    val tasksConcluded: String
+    val tasksReopened: String
+    val tasksPostponed: String
     fun tasksCount(n: Int): String
 
     // ---- Eventos ----

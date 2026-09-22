@@ -5,12 +5,16 @@ import androidx.lifecycle.viewModelScope
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.data.repository.TaskRepository
 import com.dailycompany.domain.model.Task
+import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.newTask
+import java.time.LocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,11 +27,18 @@ enum class TasksTab {
     DONE,
 }
 
+/** Mensagem de snackbar emitida pelo ViewModel — a UI resolve o texto via AppStrings. */
+enum class TaskSnackbar {
+    DONE,
+    REOPENED,
+    POSTPONED,
+}
+
 data class TasksUiState(
     val isLoading: Boolean = true,
     val tasks: List<Task> = emptyList(),
     val selectedTab: TasksTab = TasksTab.TODAY,
-    val snackbarMessage: String? = null,
+    val snackbar: TaskSnackbar? = null,
 )
 
 /** Última ação destrutiva para permitir "Desfazer". */
@@ -42,12 +53,15 @@ class TasksViewModel @Inject constructor(
     private val clock: AppClock,
 ) : ViewModel() {
 
+    /** Data de hoje derivada do relógio injetado (testável via FixedClock). */
+    val today: LocalDate get() = clock.today()
+
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
     private val _selectedTab = MutableStateFlow(TasksTab.TODAY)
     private val _undo = MutableStateFlow<UndoAction?>(null)
-    private val _snackbarMessage = MutableStateFlow<String?>(null)
+    private val _snackbarMessage = MutableStateFlow<TaskSnackbar?>(null)
 
-    private val uiState: StateFlow<TasksUiState> = combine(
+    val uiState: StateFlow<TasksUiState> = combine(
         _tasks,
         _selectedTab,
         _undo.map { it != null },
@@ -57,9 +71,9 @@ class TasksViewModel @Inject constructor(
             isLoading = false,
             tasks = tasks,
             selectedTab = tab,
-            snackbarMessage = msg,
+            snackbar = msg,
         )
-    }.stateIn(viewModelScope.sharedFlowScope, SharingStarted.WhileSubscribed(5_000), TasksUiState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TasksUiState())
 
     init {
         viewModelScope.launch {
@@ -95,7 +109,7 @@ class TasksViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setDone(task.id, newDone)
             _undo.value = UndoAction.SetDone(task, task.done)
-            _snackbarMessage.value = if (newDone) "Concluída" else "Reaberta"
+            _snackbarMessage.value = if (newDone) TaskSnackbar.DONE else TaskSnackbar.REOPENED
         }
     }
 
@@ -103,7 +117,7 @@ class TasksViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setDueDate(task.id, clock.today().plusDays(1))
             _undo.value = UndoAction.MoveToTomorrow(task)
-            _snackbarMessage.value = "Adiada para amanhã"
+            _snackbarMessage.value = TaskSnackbar.POSTPONED
         }
     }
 

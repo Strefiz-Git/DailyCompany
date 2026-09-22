@@ -57,6 +57,11 @@ object EnStrings : AppStrings {
     override val tasksOverdue = "Overdue"
     override val tasksPostponeTomorrow = "Postpone to tomorrow"
     override val tasksEmpty = "No tasks yet. Add the first one."
+    override val tasksConclude = "Mark done"
+    override val tasksReopen = "Reopen"
+    override val tasksConcluded = "Done"
+    override val tasksReopened = "Reopened"
+    override val tasksPostponed = "Moved to tomorrow"
     override fun tasksCount(n: Int) = if (n == 1) "1 task" else "$n tasks"
 
     override val eventsTitle = "Calendar"

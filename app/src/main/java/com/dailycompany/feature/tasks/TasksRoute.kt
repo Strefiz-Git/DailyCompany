@@ -49,7 +49,9 @@ import com.dailycompany.domain.model.TaskPriority
 import com.dailycompany.domain.model.groupTasks
 import com.dailycompany.ui.components.EmptyState
 import com.dailycompany.ui.components.TopAppBarWithSettings
+import com.dailycompany.ui.theme.AppStrings
 import com.dailycompany.ui.theme.strings
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlinx.coroutines.launch
@@ -80,10 +82,11 @@ fun TasksScreen(
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(viewModel.uiState.collectAsState().value?.snackbarMessage) {
-        val msg = viewModel.uiState.collectAsState().value?.snackbarMessage ?: return@LaunchedEffect
+    LaunchedEffect(uiState.snackbar) {
+        val snackbar = uiState.snackbar ?: return@LaunchedEffect
+        val message = snackbar.toMessage(s) ?: return@LaunchedEffect
         val result = snackbarHostState.showSnackbar(
-            message = msg,
+            message = message,
             actionLabel = s.actionUndo,
             withDismissAction = true,
         )
@@ -120,7 +123,7 @@ fun TasksScreen(
                         .padding(24.dp),
                 )
             } else {
-                val grouped = groupTasks(uiState.tasks, clock.today())
+                val grouped = groupTasks(uiState.tasks, viewModel.today)
                 val visible = when (uiState.selectedTab) {
                     TasksTab.TODAY -> grouped.today
                     TasksTab.UPCOMING -> grouped.upcoming
@@ -142,6 +145,7 @@ fun TasksScreen(
                         items(visible, key = { it.id }) { task ->
                             TaskRow(
                                 task = task,
+                                today = viewModel.today,
                                 onToggleDone = { viewModel.toggleDone(task) },
                                 onPostpone = { viewModel.postponeToTomorrow(task) },
                             )
@@ -154,7 +158,7 @@ fun TasksScreen(
     }
 }
 
-private fun TasksTab.label(s: com.dailycompany.ui.theme.AppStrings): String = when (this) {
+private fun TasksTab.label(s: AppStrings): String = when (this) {
     TasksTab.TODAY -> s.tasksTabToday
     TasksTab.UPCOMING -> s.tasksTabUpcoming
     TasksTab.NO_DATE -> s.tasksTabNoDate
@@ -164,9 +168,11 @@ private fun TasksTab.label(s: com.dailycompany.ui.theme.AppStrings): String = wh
 @Composable
 private fun TaskRow(
     task: Task,
+    today: LocalDate,
     onToggleDone: () -> Unit,
     onPostpone: () -> Unit,
 ) {
+    val s = strings()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,7 +186,7 @@ private fun TaskRow(
                 } else {
                     Icons.Outlined.Schedule
                 },
-                contentDescription = if (task.done) "Reabrir" else "Concluir",
+                contentDescription = if (task.done) s.tasksReopen else s.tasksConclude,
             )
         }
         Column(modifier = Modifier.weight(1f)) {
@@ -208,4 +214,12 @@ private fun TaskRow(
             }
         }
     }
+}
+
+/** Resolve o texto de cada mensagem de snackbar emitida pelo ViewModel. */
+private fun TaskSnackbar?.toMessage(s: AppStrings): String? = when (this) {
+    TaskSnackbar.DONE -> s.tasksConcluded
+    TaskSnackbar.REOPENED -> s.tasksReopened
+    TaskSnackbar.POSTPONED -> s.tasksPostponed
+    null -> null
 }
