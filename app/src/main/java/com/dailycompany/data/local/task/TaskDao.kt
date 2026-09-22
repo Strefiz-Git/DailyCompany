@@ -27,9 +27,6 @@ interface TaskDao {
     @Query("UPDATE tasks SET done = 0, done_at = NULL WHERE id = :id")
     suspend fun markNotDone(id: Long)
 
-    @Query("UPDATE tasks SET done = 0, done_at = NULL WHERE id = :id")
-    suspend fun markNotDone(id: Long)
-
     @Query("UPDATE tasks SET due_date = :dueDate WHERE id = :id")
     suspend fun setDueDate(id: Long, dueDate: LocalDate?)
 

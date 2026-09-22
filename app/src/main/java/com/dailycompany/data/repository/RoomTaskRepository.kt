@@ -5,6 +5,7 @@ import com.dailycompany.data.local.task.TaskDao
 import com.dailycompany.data.local.task.TaskEntity
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskPriority
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -36,9 +37,10 @@ class RoomTaskRepository @Inject constructor(
         },
         done = done,
         createdAt = LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(createdAt),
+            Instant.ofEpochMilli(createdAt),
             clock.zone(),
         ),
+        doneAt = doneAt?.let { LocalDateTime.ofInstant(Instant.ofEpochMilli(it), clock.zone()) },
     )
 
     private fun Task.toEntity(): TaskEntity = TaskEntity(
@@ -54,6 +56,7 @@ class RoomTaskRepository @Inject constructor(
         },
         done = done,
         createdAt = createdAt.atZone(clock.zone()).toInstant().toEpochMilli(),
+        doneAt = doneAt?.atZone(clock.zone())?.toInstant()?.toEpochMilli(),
     )
 
     override fun observeAll(): Flow<List<Task>> = dao.observeAll().map { list -> list.map { it.toDomain() } }
@@ -63,8 +66,11 @@ class RoomTaskRepository @Inject constructor(
     override suspend fun save(task: Task): Long = dao.upsert(task.toEntity())
 
     override suspend fun setDone(id: Long, done: Boolean) {
-        if (done) dao.markDone(id, System.currentTimeMillis())
-        else dao.markNotDone(id)
+        if (done) {
+            dao.markDone(id, clock.now().atZone(clock.zone()).toInstant().toEpochMilli())
+        } else {
+            dao.markNotDone(id)
+        }
     }
 
     override suspend fun setDueDate(id: Long, date: LocalDate?) = dao.setDueDate(id, date)
