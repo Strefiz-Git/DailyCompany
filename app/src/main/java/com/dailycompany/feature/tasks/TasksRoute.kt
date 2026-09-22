@@ -203,7 +203,7 @@ private fun QuickAddBar(
                 .fillMaxWidth()
                 .navigationBarsPadding()
                 .imePadding()
-                .padding(horizontal = Spacing.screenH, vertical = Spacing.sm),
+                .padding(horizontal = Spacing.screenH, vertical = Spacing.xs),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             OutlinedTextField(
