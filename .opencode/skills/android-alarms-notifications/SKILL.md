@@ -90,7 +90,7 @@ class ReminderScheduler @Inject constructor(
 - Add actions where useful: **Done** and **Snooze 10 min**. Snooze = schedule a new one-shot alarm now + 10 min.
 - Use a stable notification id per reminder so updates replace instead of piling up.
 - Check `NotificationManagerCompat.areNotificationsEnabled()` before posting and handle permission denied.
-- Texts in `strings.xml` (PT-PT default), no hardcoded strings.
+- Text comes from the project's `AppStrings` — via `StringsProvider` outside Compose — in all three languages, never hardcoded. See `android-i18n-theme`.
 
 ## Edge cases to handle explicitly
 

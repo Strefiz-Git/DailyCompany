@@ -149,7 +149,7 @@ LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangem
 - Read colors, typography and shapes from `MaterialTheme.colorScheme`, `MaterialTheme.typography`, `MaterialTheme.shapes`. No hardcoded hex colors or `sp` sizes inside screens.
 - Support light and dark theme; dynamic color (Android 12+) is optional and must be guarded with `Build.VERSION.SDK_INT >= Build.VERSION_CODES.S`.
 - Use `Scaffold` with `innerPadding` applied to the content. Handle edge-to-edge with `enableEdgeToEdge()` in `MainActivity` and `WindowInsets` (`imePadding()`, `navigationBarsPadding()`) where needed.
-- All user-visible text goes in `res/values/strings.xml` and is read with `stringResource(R.string.x)`. Do not hardcode strings in composables. If the project has multiple locales, update every `values-xx/strings.xml`.
+- All user-visible text follows the **project's i18n system**. This project uses `AppStrings` Kotlin objects (`strings()` in composables, `StringsProvider` outside Compose) in three languages — see the `android-i18n-theme` skill; never `strings.xml` for screen text. (For a standard app that does use `strings.xml`: read with `stringResource(R.string.x)` and update every `values-xx/strings.xml`.) Do not hardcode strings in composables either way.
 - Sizes in `dp`, text in `sp`. Reuse spacing constants instead of magic numbers repeated across files.
 
 ## 7. Navigation

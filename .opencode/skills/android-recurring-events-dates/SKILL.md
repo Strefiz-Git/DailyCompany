@@ -73,15 +73,15 @@ data class Event(
 - **Weekly with several weekdays:** iterate the week containing the date; respect `interval` (every 2 weeks) counting from the week of `startDate`.
 - **DST:** convert local date+time with `ZonedDateTime.of(date, time, zone)`; a non-existent time (spring forward) shifts forward automatically, an ambiguous time (fall back) picks the earlier offset. Do not add 24 hours to an `Instant` to get "tomorrow same time" - add days to the `LocalDate`.
 - **Time zone change of the device:** floating events keep the wall-clock time; recompute the trigger instants.
-- **Week start:** use `WeekFields.of(Locale.getDefault())` (Portugal: Monday) instead of assuming Sunday.
+- **Week start:** use `WeekFields.of(LocalAppLocale.current)` (PT-PT/PT-BR: Monday; EN follows the locale) instead of assuming Sunday.
 - **Leap seconds / year boundaries:** operate on `LocalDate`, not on millisecond arithmetic.
 
 ## Formatting and UI (PT-PT)
 
-- Format with `DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)` / `ofPattern("EEEE, d 'de' MMMM", Locale("pt", "PT"))` so month/day names are Portuguese. Use `DateFormat.is24HourFormat(context)` for the time picker mode.
+- Format with `DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalAppLocale.current)` so month/day names follow the app language (PT-PT reference pattern: `ofPattern("EEEE, d 'de' MMMM", Locale("pt", "PT"))`). Use `DateFormat.is24HourFormat(context)` for the time picker mode.
 - Pickers: Material 3 `DatePicker` / `TimePicker` (`DatePickerDialog`, `rememberDatePickerState`, `rememberTimePickerState`). Note that `DatePickerState` returns **UTC epoch millis at midnight**; convert with `Instant.ofEpochMilli(ms).atZone(ZoneOffset.UTC).toLocalDate()` to avoid off-by-one-day bugs.
 - Show relative info where helpful: "hoje", "amanha", "em 3 dias", and the age for yearly events ("faz 25 anos").
-- Put all user-visible strings in `strings.xml` (`values-pt-rPT` if the default is another language).
+- All user-visible strings come from the project's `AppStrings` (`strings()` in Compose, `StringsProvider` elsewhere), in the three languages; dates/times follow `LocalAppLocale`, never a hardcoded locale. See `android-i18n-theme`. Never hardcode text.
 
 ## Checklist
 
