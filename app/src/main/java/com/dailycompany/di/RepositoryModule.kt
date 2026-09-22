@@ -1,0 +1,19 @@
+package com.dailycompany.di
+
+import com.dailycompany.data.repository.RoomTaskRepository
+import com.dailycompany.data.repository.TaskRepository
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+/** Liga as interfaces de domínio/repositório às implementações Room. */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindTaskRepository(impl: RoomTaskRepository): TaskRepository
+}

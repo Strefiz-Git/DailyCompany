@@ -14,9 +14,13 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asLimitedParallelism
-import kotlinx.coroutines.asLimitedParallelism
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+/**
+ * Módulo Hilt global — único ponto de fornecimento de Room, do relógio e
+ * de dispatchers (regra AGENTS: nenhum outro ficheiro chama
+ * `Room.databaseBuilder` nem `SystemClock()`).
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppDiModule {
@@ -28,7 +32,7 @@ object AppDiModule {
         Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "tasks.db",
+            "dailycompany.db",
         ).build()
 
     @Provides
@@ -39,7 +43,9 @@ object AppDiModule {
     @Singleton
     fun provideAppClock(): AppClock = SystemClock()
 
+    // ---- Dispatchers ----
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
-    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO.asLimitedParallelism(2)
+    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO.limitedParallelism(2)
 }
