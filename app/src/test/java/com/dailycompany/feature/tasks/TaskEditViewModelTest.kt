@@ -6,6 +6,7 @@ import com.dailycompany.core.MainDispatcherRule
 import com.dailycompany.core.time.FixedClock
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskIcon
+import com.dailycompany.domain.model.TaskRepeat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -79,6 +80,24 @@ class TaskEditViewModelTest {
         assertEquals(today, saved.dueDate)
         assertEquals(LocalTime.of(18, 30), saved.dueTime)
         assertEquals(TaskIcon.Emoji("🛒"), saved.icon)
+        assertEquals(TaskRepeat.NONE, saved.repeat)
+    }
+
+    @Test
+    fun `changeRepeat atualiza o estado e save persiste`() = runTest {
+        val repo = FakeTaskRepository()
+        val vm = TaskEditViewModel(SavedStateHandle(), repo, FixedClock(today))
+
+        vm.onTitleChange("Beber água")
+        vm.onRepeatChange(TaskRepeat.DAILY)
+
+        vm.events.test {
+            vm.save()
+            assertEquals(TaskEditEvent.Close, awaitItem())
+        }
+
+        val saved = repo.observeAll().first().single()
+        assertEquals(TaskRepeat.DAILY, saved.repeat)
     }
 
     @Test

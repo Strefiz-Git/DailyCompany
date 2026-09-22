@@ -21,6 +21,8 @@ data class TaskEntity(
     val dueTime: LocalTime? = null,
     val priority: TaskPriorityEntity = TaskPriorityEntity.NONE,
     val icon: String? = null,
+    @ColumnInfo(name = "repeat", defaultValue = "NONE")
+    val repeat: TaskRepeatEntity = TaskRepeatEntity.NONE,
     val done: Boolean = false,
     @ColumnInfo(name = "created_at") val createdAt: Long = 0L,
     @ColumnInfo(name = "done_at") val doneAt: Long? = null,

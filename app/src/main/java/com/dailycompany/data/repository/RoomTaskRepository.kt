@@ -3,8 +3,10 @@ package com.dailycompany.data.repository
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.data.local.task.TaskDao
 import com.dailycompany.data.local.task.TaskEntity
+import com.dailycompany.data.local.task.TaskRepeatEntity
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.TaskRepeat
 import com.dailycompany.domain.model.parseTaskIcon
 import com.dailycompany.domain.model.serialize
 import java.time.Instant
@@ -38,6 +40,13 @@ class RoomTaskRepository @Inject constructor(
             com.dailycompany.data.local.task.TaskPriorityEntity.HIGH -> TaskPriority.HIGH
         },
         icon = parseTaskIcon(icon),
+        repeat = when (repeat) {
+            TaskRepeatEntity.NONE -> TaskRepeat.NONE
+            TaskRepeatEntity.DAILY -> TaskRepeat.DAILY
+            TaskRepeatEntity.WEEKLY -> TaskRepeat.WEEKLY
+            TaskRepeatEntity.MONTHLY -> TaskRepeat.MONTHLY
+            TaskRepeatEntity.YEARLY -> TaskRepeat.YEARLY
+        },
         done = done,
         createdAt = LocalDateTime.ofInstant(
             Instant.ofEpochMilli(createdAt),
@@ -58,6 +67,13 @@ class RoomTaskRepository @Inject constructor(
             TaskPriority.HIGH -> com.dailycompany.data.local.task.TaskPriorityEntity.HIGH
         },
         icon = icon?.serialize(),
+        repeat = when (repeat) {
+            TaskRepeat.NONE -> TaskRepeatEntity.NONE
+            TaskRepeat.DAILY -> TaskRepeatEntity.DAILY
+            TaskRepeat.WEEKLY -> TaskRepeatEntity.WEEKLY
+            TaskRepeat.MONTHLY -> TaskRepeatEntity.MONTHLY
+            TaskRepeat.YEARLY -> TaskRepeatEntity.YEARLY
+        },
         done = done,
         createdAt = createdAt.atZone(clock.zone()).toInstant().toEpochMilli(),
         doneAt = doneAt?.atZone(clock.zone())?.toInstant()?.toEpochMilli(),

@@ -43,26 +43,6 @@ val materialTaskIconNames: List<String> = listOf(
     "check_circle",
 )
 
-/** Emojis escolhíveis (mostrados como texto). */
-val emojiTaskIcons: List<String> = listOf(
-    "🛒",
-    "🏋️",
-    "📚",
-    "💼",
-    "🏠",
-    "🍽️",
-    "🏃",
-    "💊",
-    "⭐",
-    "❤️",
-    "📅",
-    "✈️",
-    "🚗",
-    "🎉",
-    "☕",
-    "🧹",
-)
-
 /** Constrói o `TaskIcon.Material` para o catálogo. */
 fun materialTaskIcon(name: String): TaskIcon.Material = TaskIcon.Material(name)
 

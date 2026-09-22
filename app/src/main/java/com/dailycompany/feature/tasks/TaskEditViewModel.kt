@@ -8,6 +8,7 @@ import com.dailycompany.data.repository.TaskRepository
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskIcon
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.TaskRepeat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -39,6 +40,7 @@ data class TaskEditUiState(
     val dueTime: LocalTime? = null,
     val priority: TaskPriority = TaskPriority.NONE,
     val icon: TaskIcon? = null,
+    val repeat: TaskRepeat = TaskRepeat.NONE,
     val canSave: Boolean = false,
     val snackbar: TaskEditSnackbar? = null,
 )
@@ -77,6 +79,7 @@ class TaskEditViewModel @Inject constructor(
                         dueTime = loaded.dueTime,
                         priority = loaded.priority,
                         icon = loaded.icon,
+                        repeat = loaded.repeat,
                         canSave = loaded.title.isNotBlank(),
                     )
                 } ?: run {
@@ -112,6 +115,10 @@ class TaskEditViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(icon = icon)
     }
 
+    fun onRepeatChange(repeat: TaskRepeat) {
+        _uiState.value = _uiState.value.copy(repeat = repeat)
+    }
+
     fun save() {
         if (!_uiState.value.canSave) return
         viewModelScope.launch {
@@ -125,6 +132,7 @@ class TaskEditViewModel @Inject constructor(
                     dueTime = state.dueTime,
                     priority = state.priority,
                     icon = state.icon,
+                    repeat = state.repeat,
                     done = false,
                     createdAt = clock.now(),
                 ),

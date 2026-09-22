@@ -27,4 +27,12 @@ class TaskConverters {
     fun toPriority(value: String?): TaskPriorityEntity? = value?.let {
         TaskPriorityEntity.entries.firstOrNull { p -> p.name == it } ?: TaskPriorityEntity.NONE
     }
+
+    @androidx.room.TypeConverter
+    fun fromRepeat(value: TaskRepeatEntity?): String? = value?.name
+
+    @androidx.room.TypeConverter
+    fun toRepeat(value: String?): TaskRepeatEntity? = value?.let {
+        TaskRepeatEntity.entries.firstOrNull { p -> p.name == it } ?: TaskRepeatEntity.NONE
+    }
 }

@@ -30,6 +30,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dailycompany.domain.model.TaskIcon
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.TaskRepeat
 import com.dailycompany.ui.theme.AppStrings
 import com.dailycompany.ui.theme.LocalAppLocale
 import com.dailycompany.ui.theme.Spacing
@@ -114,6 +116,7 @@ fun TaskEditRoute(
         onTimeChange = viewModel::onTimeChange,
         onPriorityChange = viewModel::onPriorityChange,
         onIconChange = viewModel::onIconChange,
+        onRepeatChange = viewModel::onRepeatChange,
         onSave = viewModel::save,
         onDelete = viewModel::delete,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -131,6 +134,7 @@ private fun TaskEditScreen(
     onTimeChange: (LocalTime?) -> Unit,
     onPriorityChange: (TaskPriority) -> Unit,
     onIconChange: (TaskIcon?) -> Unit,
+    onRepeatChange: (TaskRepeat) -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
     snackbarHost: @Composable () -> Unit,
@@ -266,6 +270,26 @@ private fun TaskEditScreen(
                 )
                 Spacer(Modifier.height(Spacing.lg))
 
+                Text(
+                    text = s.tasksFieldRepeat,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(Spacing.xs))
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+                ) {
+                    TaskRepeat.entries.forEach { option ->
+                        FilterChip(
+                            selected = uiState.repeat == option,
+                            onClick = { onRepeatChange(option) },
+                            label = { Text(option.label(s)) },
+                        )
+                    }
+                }
+                Spacer(Modifier.height(Spacing.lg))
+
                 TextButton(
                     onClick = onSave,
                     enabled = uiState.canSave,
@@ -347,6 +371,7 @@ private fun IconPicker(
 ) {
     val s = strings()
     var mode by remember { mutableStateOf(IconMode.ICONS) }
+    var emojiText by remember { mutableStateOf((selected as? TaskIcon.Emoji)?.char.orEmpty()) }
 
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
         IconMode.entries.forEachIndexed { index, item ->
@@ -410,41 +435,29 @@ private fun IconPicker(
             }
         }
 
-        IconMode.EMOJIS -> FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
-            verticalArrangement = Arrangement.spacedBy(Spacing.xs),
-        ) {
-            emojiTaskIcons.forEach { char ->
-                val icon = TaskIcon.Emoji(char)
-                val isSelected = selected == icon
+        IconMode.EMOJIS -> {
+            val preview = (selected as? TaskIcon.Emoji)?.char.orEmpty()
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = emojiText,
+                    onValueChange = { text ->
+                        emojiText = text
+                        val trimmed = text.trim()
+                        onSelect(if (trimmed.isEmpty()) null else TaskIcon.Emoji(trimmed))
+                    },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text(s.tasksEmojiHint) },
+                    singleLine = true,
+                )
+                Spacer(Modifier.width(Spacing.sm))
                 Box(
                     modifier = Modifier
                         .size(Spacing.xxl)
-                        .background(
-                            color = if (isSelected) {
-                                palette.secondaryContainer
-                            } else {
-                                palette.surfaceVariant
-                            },
-                            shape = shape,
-                        )
-                        .then(
-                            if (isSelected) {
-                                Modifier.border(
-                                    width = Spacing.xxs,
-                                    color = palette.primary,
-                                    shape = shape,
-                                )
-                            } else {
-                                Modifier
-                            },
-                        )
-                        .clickable { onSelect(icon) }
-                        .padding(Spacing.xs),
+                        .background(palette.surfaceVariant, shape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = char,
+                        text = preview,
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -475,6 +488,15 @@ private fun TaskPriority.label(s: AppStrings): String = when (this) {
     TaskPriority.NONE -> s.tasksPriorityNone
     TaskPriority.MEDIUM -> s.tasksPriorityMedium
     TaskPriority.HIGH -> s.tasksPriorityHigh
+}
+
+/** Rótulo da repetição — reutiliza o vocabulário de recorrência (Eventos). */
+internal fun TaskRepeat.label(s: AppStrings): String = when (this) {
+    TaskRepeat.NONE -> s.recurrenceNever
+    TaskRepeat.DAILY -> s.recurrenceDaily
+    TaskRepeat.WEEKLY -> s.recurrenceWeekly
+    TaskRepeat.MONTHLY -> s.recurrenceMonthly
+    TaskRepeat.YEARLY -> s.recurrenceYearly
 }
 
 @Composable

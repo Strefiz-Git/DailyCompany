@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.material.icons.outlined.Repeat
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -55,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskGroups
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.TaskRepeat
 import com.dailycompany.domain.model.groupTasks
 import com.dailycompany.ui.components.EmptyState
 import com.dailycompany.ui.components.SectionHeader
@@ -346,6 +348,14 @@ private fun TaskRow(
                 }
                 if (task.priority != TaskPriority.NONE) {
                     PriorityDot(priority = task.priority)
+                }
+                if (task.repeat != TaskRepeat.NONE) {
+                    Icon(
+                        imageVector = Icons.Outlined.Repeat,
+                        contentDescription = task.repeat.label(s),
+                        modifier = Modifier.size(Spacing.md),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
                 if (task.dueDate != null && task.dueDate < today && !task.done) {
                     Text(

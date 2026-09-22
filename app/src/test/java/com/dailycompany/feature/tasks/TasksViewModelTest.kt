@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.dailycompany.core.MainDispatcherRule
 import com.dailycompany.core.time.FixedClock
 import com.dailycompany.domain.model.Task
+import com.dailycompany.domain.model.TaskRepeat
 import com.dailycompany.domain.model.TaskPriority
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,11 +32,13 @@ class TasksViewModelTest {
         id: Long,
         dueDate: LocalDate? = null,
         done: Boolean = false,
+        repeat: TaskRepeat = TaskRepeat.NONE,
     ) = Task(
         id = id,
         title = "Tarefa $id",
         dueDate = dueDate,
         done = done,
+        repeat = repeat,
         createdAt = LocalDateTime.of(2026, 9, 1, 8, 0),
     )
 
@@ -127,16 +130,30 @@ class TasksViewModelTest {
     }
 
     @Test
-    fun `selectTab muda o separador`() = runTest(mainDispatcherRule.dispatcher) {
-        val vm = TasksViewModel(FakeTaskRepository(), FixedClock(today))
+    fun `toggleDone em tarefa repetitiva avanca para a proxima ocorrencia`() = runTest(mainDispatcherRule.dispatcher) {
+        val repo = FakeTaskRepository(initial = listOf(task(1L, dueDate = today, repeat = TaskRepeat.DAILY)))
+        val vm = TasksViewModel(repo, FixedClock(today))
 
         vm.uiState.test {
-            assertEquals(TasksTab.TODAY, expectMostRecentItem().selectedTab)
+            expectMostRecentItem() // carrega a tarefa não feita
 
-            vm.selectTab(TasksTab.UPCOMING)
+            vm.toggleDone(task(1L, dueDate = today, repeat = TaskRepeat.DAILY))
             advanceUntilIdle()
 
-            assertEquals(TasksTab.UPCOMING, expectMostRecentItem().selectedTab)
+            val rolled = expectMostRecentItem()
+            assertEquals(TaskSnackbar.DONE, rolled.snackbar)
+            // não fica concluída: avança para amanhã e mantém-se por fazer
+            val advanced = rolled.tasks.single()
+            assertFalse(advanced.done)
+            assertEquals(today.plusDays(1), advanced.dueDate)
+
+            vm.undo()
+            vm.consumeSnackbar()
+            advanceUntilIdle()
+
+            val restored = expectMostRecentItem()
+            assertEquals(today, restored.tasks.single().dueDate)
+            assertFalse(restored.tasks.single().done)
         }
     }
 }

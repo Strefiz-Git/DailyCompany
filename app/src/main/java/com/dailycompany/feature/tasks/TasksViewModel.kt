@@ -6,7 +6,9 @@ import com.dailycompany.core.time.AppClock
 import com.dailycompany.data.repository.TaskRepository
 import com.dailycompany.domain.model.Task
 import com.dailycompany.domain.model.TaskPriority
+import com.dailycompany.domain.model.TaskRepeat
 import com.dailycompany.domain.model.newTask
+import com.dailycompany.domain.model.nextDueDate
 import java.time.LocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -45,6 +47,9 @@ data class TasksUiState(
 sealed interface UndoAction {
     data class SetDone(val task: Task, val done: Boolean) : UndoAction
     data class MoveToTomorrow(val task: Task) : UndoAction
+
+    /** Concluir uma tarefa repetitiva — repõe o estado anterior completo. */
+    data class RollForward(val task: Task) : UndoAction
 }
 
 @HiltViewModel
@@ -105,11 +110,28 @@ class TasksViewModel @Inject constructor(
     }
 
     fun toggleDone(task: Task) {
-        val newDone = !task.done
         viewModelScope.launch {
-            repository.setDone(task.id, newDone)
-            _undo.value = UndoAction.SetDone(task, task.done)
-            _snackbarMessage.value = if (newDone) TaskSnackbar.DONE else TaskSnackbar.REOPENED
+            when {
+                task.done -> {
+                    repository.setDone(task.id, false)
+                    _undo.value = UndoAction.SetDone(task, true)
+                    _snackbarMessage.value = TaskSnackbar.REOPENED
+                }
+                task.repeat == TaskRepeat.NONE -> {
+                    repository.setDone(task.id, true)
+                    _undo.value = UndoAction.SetDone(task, false)
+                    _snackbarMessage.value = TaskSnackbar.DONE
+                }
+                else -> {
+                    // Repetitiva: em vez de "concluir", avança para a próxima
+                    // ocorrência (continua por concluir no dia certo).
+                    repository.save(
+                        task.copy(done = false, dueDate = task.nextDueDate(clock.today())),
+                    )
+                    _undo.value = UndoAction.RollForward(task)
+                    _snackbarMessage.value = TaskSnackbar.DONE
+                }
+            }
         }
     }
 
@@ -127,6 +149,7 @@ class TasksViewModel @Inject constructor(
             when (action) {
                 is UndoAction.SetDone -> repository.setDone(action.task.id, action.task.done)
                 is UndoAction.MoveToTomorrow -> repository.setDueDate(action.task.id, action.task.dueDate)
+                is UndoAction.RollForward -> repository.save(action.task)
             }
         }
         _undo.value = null
