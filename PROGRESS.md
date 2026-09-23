@@ -10,10 +10,10 @@
 
 | Campo | Valor |
 |---|---|
-| Fase atual | **1 — Tarefas** (em curso 🔶) |
+| Fase atual | **2 — Eventos** (em curso 🔶 — Passo 1: domínio + calculadora + testes) |
 | Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) — **stack atualizado**: Compose BOM 2026.04.01 (ui/foundation/animation 1.11.0, material3 1.4.0, icons 1.7.8), Kotlin 2.3.21, KSP 2.3.12, Room 2.8.4, Hilt 2.58 |
-| Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro, **topbar sem faixa vazia, altura da quick-add**); depois push/merge (aguarda OK) |
-| Branch ativa | `chore/upgrade-compose-stack` |
+| Prioridade imediata | Passo 2 da Fase 2 (Eventos) — Room v3→v4 (`EventEntity`/`EventExceptionEntity`/DAO/converters + migração + schema `4.json`), repositório+DI, VMs, lista/edição; depois revalidar e seguir roadmap. **Fase 1: ainda falta validar em dispositivo + merge (aguarda OK)** |
+| Branch ativa | `feat/events` |
 
 ## 2. Fases do roadmap
 
@@ -23,7 +23,7 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 |---|---|---|---|
 | **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | ✅ concluída | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
 | **1 — Tarefas** | CRUD, Hoje básico, adiar, undo, estados vazios | 🔶 em curso | Consigo gerir um dia inteiro só com tarefas |
-| **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada + lista e calendário | ⚪ não iniciada | Aniversário anual e consulta a 3 meses funcionam |
+| **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada + lista e calendário | 🔶 em curso — **Passo 1 (domínio + testes) concluído** | Aniversário anual e consulta a 3 meses funcionam |
 | **3 — Lembretes e alarmes** | AlarmManager, notificações com ações, permissões, boot receiver | ⚪ não iniciada | Alarme toca; sobrevive a reinício |
 | **4 — Guarda-roupa** | Fotos (picker/câmara/EXIF/thumbnails), peça completa, grelha, filtros, pesquisa, categorias editáveis | ⚪ não iniciada | 30 peças catalogadas sem lentidão |
 | **5 — Outfits** | Construtor, gerador aleatório com cadeados, guardar com nome, usar hoje, histórico | ⚪ não iniciada | Botão de dados dá outfits plausíveis e guardáveis |
@@ -132,6 +132,8 @@ Critério de conclusão de cada fase: compila · testes passam · commit na bran
 | 2026-09-22 | Upgrade do stack (aprovado pelo utilizador, branch `chore/upgrade-compose-stack`): **Compose BOM 2026.04.01** (ui/foundation/animation/material3 1.11.0/1.4.0 — resolve o aviso do Studio, `ui` deixa de ser 1.9.2 transitiva), **Kotlin 2.3.21** + **KSP 2.3.12**, **Room 2.8.4** (KSP2-safe), **Hilt 2.58** (última linha compatível com AGP 8.x e com o fix de metadata Kotlin 2.3; a 2.59+ exige AGP 9). Migrações de código exigidas: `kotlinOptions` → DSL `compilerOptions` (erro no Kotlin 2.3), `TabRow` → `PrimaryTabRow` (deprecated no material3 1.4), `Icons.Outlined.DirectionsRun` → variante `AutoMirrored`, `!!` desnecessário removido, `@param:ApplicationContext` (KT-73255). `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes sem avisos. Falta: validar visual em dispositivo. |
 | 2026-09-22 | Feedback de inspeção (3.ª ronda, branch `chore/upgrade-compose-stack`): **topbar** com faixa vazia em cima do título/⋮ (edge-to-edge: `Scaffold` externo já consome a status bar; `TopAppBar` internas reaplicavam `statusBars` — fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings`, `TaskEditRoute` e `SettingsRoute`) e **quick-add** com altura aumentada (`Spacing.xs` → `sm`, conteúdo centrado). `assembleDebug` + `lintDebug` verdes. Falta revalidar em dispositivo. |
 | 2026-09-22 | Fase 1 — **repetição de tarefas** (branch `feat/task-recurrence`): `TaskRepeat` de domínio (NONE/DAILY/WEEKLY/MONTHLY/YEARLY) com `nextDueDate()` puro modelado (clamp dia 31 → fim do mês e 29-fev → 28-fev; roll-forward a partir da base original, corrigia o bug que encadeava candidatos e devolvia Mar 28 em vez de Mar 31), concluir repetitiva avança para a próxima ocorrência com undo, seletor no editor (FilterChips), badge de repetição na lista, **emoji livre** (campo de texto no editor — substitui a grelha fixa) e migração Room v2→v3 (`ALTER TABLE tasks ADD COLUMN repeat`) com schema `3.json` versionado. Strings nas 3 línguas. `assembleDebug` + 31 testes + `lintDebug` verdes. Falta: validar em dispositivo.
+| 2026-09-23 | Fase 2 — **Passo 1 (Eventos) concluído** (branch `feat/events`, commit `7c0ac59`): `Event.kt` (domínio puro `java.time`: `RecurrenceRule` NONE/DAILY/WEEKLY/MONTHLY/YEARLY com `interval`/`weekDays`/`monthPosition`, `RecurrenceEnd` Never/OnDate/AfterCount, `MonthPosition`), `OccurrenceCalculator.kt` **determinístico e ancorado a `event.date`** (clamp mensal dia 31→fim do mês e 29-fev→28-fev antes de `atDay`; "mesma posição" mensal omite se não existir; anual 29-fev→28-fev; janelas `from..to`; fins Never/OnDate/AfterCount com corte global; **R6 inviolável — ocorrências nunca são gravadas, só calculadas**) e `EventOccurrenceCalculatorTest.kt` (15 testes, verdes). `testDebugUnitTest` (15/15) + `assembleDebug` verdes. Falta: validar em dispositivo; o Passo 2 (Room v3→v4 + repositórios + UI) é o próximo; merge/push aguarda OK. |
+| 2026-09-23 | Fase 2 — **Passo 1 (Eventos) concluído** (branch `feat/events`, commit `7c0ac59`): domínio puro `Event.kt` (`RecurrenceRule` NONE/DAILY/WEEKLY/MONTHLY/YEARLY + `interval`/`weekDays`/`monthPosition`; `RecurrenceEnd` Never/OnDate/AfterCount; `MonthPosition`), `OccurrenceCalculator.kt` determinístico ancorado a `event.date` (clamp dia 31 → fim do mês e 29-fev → 28-fev **antes** de `atDay`; mensal "mesma posição" omite se não existir; anual aniversário; janelas `from..to`; fins Never/OnDate/AfterCount com corte global; **R6 inviolável — nunca grava ocorrências**) e `EventOccurrenceCalculatorTest.kt` (15 testes verdes). `testDebugUnitTest` (15/15) + `assembleDebug` verdes. Falta: Passo 2 (Room v3→v4) + validar em dispositivo; merge/push aguarda OK. |
 
 ---
 
