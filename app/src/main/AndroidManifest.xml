@@ -11,6 +11,11 @@
          Auto-concedida na instalação; o Play restringe-a a apps de alarme/relógio. -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
+    <!-- Vibração nas notificações de alarme exige VIBRATE (nível normal:
+         auto-concedida na instalação, sem diálogo; sem ela o sistema ignora
+         a vibração do canal mesmo com enableVibration). -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".DailyApp"
         android:allowBackup="true"
