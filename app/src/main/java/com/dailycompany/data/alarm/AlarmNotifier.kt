@@ -65,7 +65,15 @@ object AlarmNotifier {
             CHANNEL_ALARMS_ID,
             strings.notificationChannelAlarms,
             NotificationManager.IMPORTANCE_HIGH,
-        )
+        ).apply {
+            // Desde a API 26 a VIBRAÇÃO é controlada pelo canal, não pela
+            // notificação: sem enableVibration(true) o telemóvel não vibra
+            // mesmo com `setVibrate` no builder (confirmado em dispositivo
+            // físico — som tocava, vibração não). Padrão 0,400,200,400 = toque
+            // curto, pausa, toque curto.
+            enableVibration(true)
+            setVibrationPattern(longArrayOf(0, 400, 200, 400))
+        }
 
     private fun openApp(context: Context, alarmId: Long): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
