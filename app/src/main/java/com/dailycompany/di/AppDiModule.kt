@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.core.time.SystemClock
 import com.dailycompany.data.local.AppDatabase
+import com.dailycompany.data.local.event.EventDao
 import com.dailycompany.data.local.task.TaskDao
 import dagger.Module
 import dagger.Provides
@@ -37,6 +38,9 @@ object AppDiModule {
 
     @Provides
     fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()
+
+    @Provides
+    fun provideEventDao(database: AppDatabase): EventDao = database.eventDao()
 
     // ---- Relógio (regra: injetado, nunca System.currentTimeMillis() na UI) ----
     @Provides
