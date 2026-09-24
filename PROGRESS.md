@@ -1,8 +1,8 @@
-# PROGRESS.md — DailyCompany
+﻿# PROGRESS.md â€” DailyCompany
 
-> Registo obrigatório de progresso. Mostra **em que fase estamos**, **o que já está feito** e **qual é o próximo passo**.
+> Registo obrigatÃ³rio de progresso. Mostra **em que fase estamos**, **o que jÃ¡ estÃ¡ feito** e **qual Ã© o prÃ³ximo passo**.
 > Mantido pela skill `project-progress-tracker` a cada tarefa que muda o estado do projeto.
-> Especificação → `PROJECT.md` · Visual → `DESIGN.md` · Ecrãs → `SCREENS.md` · Regras→ `AGENTS.md`.
+> EspecificaÃ§Ã£o â†’ `PROJECT.md` Â· Visual â†’ `DESIGN.md` Â· EcrÃ£s â†’ `SCREENS.md` Â· Regrasâ†’ `AGENTS.md`.
 
 ---
 
@@ -10,129 +10,138 @@
 
 | Campo | Valor |
 |---|---|
-| Fase atual | **1 — Tarefas** (em curso 🔶) |
-| Build | `:app:assembleDebug` ✓ · `:app:testDebugUnitTest` ✓ · `:app:lintDebug` ✓ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta máquina é Java 25, não suportado pelo Gradle 8.13) — **stack atualizado**: Compose BOM 2026.04.01 (ui/foundation/animation 1.11.0, material3 1.4.0, icons 1.7.8), Kotlin 2.3.21, KSP 2.3.12, Room 2.8.4, Hilt 2.58 |
-| Prioridade imediata | Testar a Fase 1 em dispositivo (quick add, concluir/adiar com undo, abas, editor, claro/escuro, **topbar sem faixa vazia, altura da quick-add**); depois push/merge (aguarda OK) |
-| Branch ativa | `chore/upgrade-compose-stack` |
+| Fase atual | **2 — Eventos** (em curso 🔶 — Passo 1 + Passo 2 concluídos; o Passo 2 foi reparado em `068ae99`; falta Passo 3) |
+| Build | `:app:assembleDebug` âœ“ Â· `:app:testDebugUnitTest` âœ“ Â· `:app:lintDebug` âœ“ (com `JAVA_HOME` = `C:\Program Files\Java\jdk-21`; o JBR desta mÃ¡quina Ã© Java 25, nÃ£o suportado pelo Gradle 8.13) â€” **stack atualizado**: Compose BOM 2026.04.01 (ui/foundation/animation 1.11.0, material3 1.4.0, icons 1.7.8), Kotlin 2.3.21, KSP 2.3.12, Room 2.8.4, Hilt 2.58 |
+| Prioridade imediata | Passo 3 da Fase 2 (Eventos) â€” repositÃ³rio Room de eventos + DI + ViewModels + lista/ediÃ§Ã£o de eventos; depois revalidar em dispositivo e seguir roadmap. **Fase 1 + Passo 2: falta validar em dispositivo + merge (aguarda OK)** |
+| Branch ativa | `feat/events` |
 
 ## 2. Fases do roadmap
 
-Critério de conclusão de cada fase: compila · testes passam · commit na branch própria · merge para `main`.
+CritÃ©rio de conclusÃ£o de cada fase: compila Â· testes passam Â· commit na branch prÃ³pria Â· merge para `main`.
 
 | Fase | Objetivo | Estado | Pronto quando |
 |---|---|---|---|
-| **0 — Fundações** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegação, Room vazio, strings PT-PT, `.gitignore` | ✅ concluída | App corre, 5 ecrãs vazios navegáveis, claro/escuro a funcionar |
-| **1 — Tarefas** | CRUD, Hoje básico, adiar, undo, estados vazios | 🔶 em curso | Consigo gerir um dia inteiro só com tarefas |
-| **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada + lista e calendário | ⚪ não iniciada | Aniversário anual e consulta a 3 meses funcionam |
-| **3 — Lembretes e alarmes** | AlarmManager, notificações com ações, permissões, boot receiver | ⚪ não iniciada | Alarme toca; sobrevive a reinício |
-| **4 — Guarda-roupa** | Fotos (picker/câmara/EXIF/thumbnails), peça completa, grelha, filtros, pesquisa, categorias editáveis | ⚪ não iniciada | 30 peças catalogadas sem lentidão |
-| **5 — Outfits** | Construtor, gerador aleatório com cadeados, guardar com nome, usar hoje, histórico | ⚪ não iniciada | Botão de dados dá outfits plausíveis e guardáveis |
-| **6 — Guia do dia** | Hoje completo (tarefas + eventos + lembretes + outfit), notificação de resumo | ⚪ não iniciada | Um único ecrã responde às duas perguntas |
-| **7 — Polimento** | Acessibilidade, animações, desempenho, testes de UI, revisão de textos | ⚪ não iniciada | Checklists de `DESIGN.md` todas verdes |
-| **8 — Backup e release** | Exportar/importar, assinatura, R8, AAB | ⚪ não iniciada | Restauro num telemóvel limpo fica idêntico |
-| **Extras** | Meteorologia real, estatísticas, widget, inglês, arquivo por estação | ⚪ fora de âmbito | Só depois do essencial estável |
+| **0 â€” FundaÃ§Ãµes** | Projeto, Gradle + version catalog, Hilt, tema e design tokens, navegaÃ§Ã£o, Room vazio, strings PT-PT, `.gitignore` | âœ… concluÃ­da | App corre, 5 ecrÃ£s vazios navegÃ¡veis, claro/escuro a funcionar |
+| **1 â€” Tarefas** | CRUD, Hoje bÃ¡sico, adiar, undo, estados vazios | ðŸ”¶ em curso | Consigo gerir um dia inteiro sÃ³ com tarefas |
+| **2 — Eventos** | Eventos + regras de repetição + calculadora de ocorrências testada (R6: ocorrências só calculadas, nunca gravadas) + lista e calendário | 🔶 em curso — **Passo 1 + Passo 2 concluídos** | Aniversário anual e consulta a 3 meses funcionam |
+| **3 â€” Lembretes e alarmes** | AlarmManager, notificaÃ§Ãµes com aÃ§Ãµes, permissÃµes, boot receiver | âšª nÃ£o iniciada | Alarme toca; sobrevive a reinÃ­cio |
+| **4 â€” Guarda-roupa** | Fotos (picker/cÃ¢mara/EXIF/thumbnails), peÃ§a completa, grelha, filtros, pesquisa, categorias editÃ¡veis | âšª nÃ£o iniciada | 30 peÃ§as catalogadas sem lentidÃ£o |
+| **5 â€” Outfits** | Construtor, gerador aleatÃ³rio com cadeados, guardar com nome, usar hoje, histÃ³rico | âšª nÃ£o iniciada | BotÃ£o de dados dÃ¡ outfits plausÃ­veis e guardÃ¡veis |
+| **6 â€” Guia do dia** | Hoje completo (tarefas + eventos + lembretes + outfit), notificaÃ§Ã£o de resumo | âšª nÃ£o iniciada | Um Ãºnico ecrÃ£ responde Ã s duas perguntas |
+| **7 â€” Polimento** | Acessibilidade, animaÃ§Ãµes, desempenho, testes de UI, revisÃ£o de textos | âšª nÃ£o iniciada | Checklists de `DESIGN.md` todas verdes |
+| **8 â€” Backup e release** | Exportar/importar, assinatura, R8, AAB | âšª nÃ£o iniciada | Restauro num telemÃ³vel limpo fica idÃªntico |
+| **Extras** | Meteorologia real, estatÃ­sticas, widget, inglÃªs, arquivo por estaÃ§Ã£o | âšª fora de Ã¢mbito | SÃ³ depois do essencial estÃ¡vel |
 
-## 3. O que já está feito
+## 3. O que jÃ¡ estÃ¡ feito
 
-**Documentação (pronta)**
-- `PROJECT.md` — visão, funcionalidades, regras de negócio R1–R13, modelo de dados, arquitetura, roadmap.
-- `DESIGN.md` — tokens de cor/tipografia/espaço, componentes, acessibilidade.
-- `SCREENS.md` — mapa de navegação e especificação dos ecrãs.
-- `AGENTS.md` — regras obrigatórias, stack, estrutura de pastas, fluxo de trabalho, skills.
+**DocumentaÃ§Ã£o (pronta)**
+- `PROJECT.md` â€” visÃ£o, funcionalidades, regras de negÃ³cio R1â€“R13, modelo de dados, arquitetura, roadmap.
+- `DESIGN.md` â€” tokens de cor/tipografia/espaÃ§o, componentes, acessibilidade.
+- `SCREENS.md` â€” mapa de navegaÃ§Ã£o e especificaÃ§Ã£o dos ecrÃ£s.
+- `AGENTS.md` â€” regras obrigatÃ³rias, stack, estrutura de pastas, fluxo de trabalho, skills.
 - `README.md`, `LICENSE`, `.gitattributes`.
 
-**Fundações pré-código (prontas)**
-- `.opencode/skills/` — 17 skills de desenvolvimento (Compose, Gradle, Hilt, Room, UI/tema, i18n, fotos, garda-roupa/outfits, datas/eventos, alarmes, backup, testes, git, organização de pastas/código, progresso).
-- `exemplos/` — implementações de referência reutilizáveis: `Theme.kt` + temas claro/escuro, `Language.kt` + `PtPtStrings`/`PtBrStrings`/`EnStrings`, `SettingsRepository.kt`, `MainActivity.kt`, `BackupManager.kt`/`Module`/`Screen`, snippet do `AndroidManifest.xml`, ícone de splash.
-- `check_structure.py` (skill `app-code-organizer`) — diagnóstico automático de organização do código.
-- `PROGRESS.md` — este ficheiro.
+**FundaÃ§Ãµes prÃ©-cÃ³digo (prontas)**
+- `.opencode/skills/` â€” 17 skills de desenvolvimento (Compose, Gradle, Hilt, Room, UI/tema, i18n, fotos, garda-roupa/outfits, datas/eventos, alarmes, backup, testes, git, organizaÃ§Ã£o de pastas/cÃ³digo, progresso).
+- `exemplos/` â€” implementaÃ§Ãµes de referÃªncia reutilizÃ¡veis: `Theme.kt` + temas claro/escuro, `Language.kt` + `PtPtStrings`/`PtBrStrings`/`EnStrings`, `SettingsRepository.kt`, `MainActivity.kt`, `BackupManager.kt`/`Module`/`Screen`, snippet do `AndroidManifest.xml`, Ã­cone de splash.
+- `check_structure.py` (skill `app-code-organizer`) â€” diagnÃ³stico automÃ¡tico de organizaÃ§Ã£o do cÃ³digo.
+- `PROGRESS.md` â€” este ficheiro.
 
-**Código da app (Fase 0 em curso)**
-- Scaffold Android criado no Android Studio e integrado: repositório movido para a raiz (`gradle/`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `app/`).
-- Package renomeado `com.example.dailycompany` → `com.dailycompany`; `minSdk` 26.
+**CÃ³digo da app (Fase 0 em curso)**
+- Scaffold Android criado no Android Studio e integrado: repositÃ³rio movido para a raiz (`gradle/`, `build.gradle.kts`, `settings.gradle.kts`, `gradlew`, `app/`).
+- Package renomeado `com.example.dailycompany` â†’ `com.dailycompany`; `minSdk` 26.
 - Version catalog atualizado: Hilt + KSP, DataStore Preferences, Navigation Compose, `lifecycle-viewmodel-compose`, `core-splashscreen`, `material-icons-extended`.
-- Tema: `Color.kt` (tokens de DESIGN.md, claro/escuro), `Dimens.kt` (`Spacing`, `AppShapes`), `Type.kt` (pesos/tamanhos de DESIGN.md, fontes do sistema por agora), `Theme.kt` (`DailyCompanyTheme` com `ThemeMode`, locale, `AppStrings`). `LocalContext` não é substituído (partia o `hiltViewModel()`); o locale chega aos composables por `LocalConfiguration` + `LocalAppLocale`.
-- Línguas: `AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings` (completas nas três línguas).
-- `SettingsRepository` + `StringsProvider` (DataStore), `AppSettingsViewModel` com splash até a 1.ª leitura.
+- Tema: `Color.kt` (tokens de DESIGN.md, claro/escuro), `Dimens.kt` (`Spacing`, `AppShapes`), `Type.kt` (pesos/tamanhos de DESIGN.md, fontes do sistema por agora), `Theme.kt` (`DailyCompanyTheme` com `ThemeMode`, locale, `AppStrings`). `LocalContext` nÃ£o Ã© substituÃ­do (partia o `hiltViewModel()`); o locale chega aos composables por `LocalConfiguration` + `LocalAppLocale`.
+- LÃ­nguas: `AppStrings` + `PtPtStrings`/`PtBrStrings`/`EnStrings` (completas nas trÃªs lÃ­nguas).
+- `SettingsRepository` + `StringsProvider` (DataStore), `AppSettingsViewModel` com splash atÃ© a 1.Âª leitura.
 - `DailyApp` (`@HiltAndroidApp`), splash (temas XML claro/escuro + `ic_splash_icon`).
-- Navegação: `DailyCompanyApp` com `NavigationBar` de 5 destinos + `NavHost`; 5 ecrãs vazios (`today`, `tasks`, `events`, `wardrobe`, `outfits`) com `EmptyState`.
-- Componentes partilhados: `TopAppBarWithSettings` (menu ⋮ → Definições) e `SectionHeader`.
-- Ecrã **Definições**: `SettingsViewModel` + `SettingsRoute`/`SettingsScreen` (stateless, com preview claro/escuro) — tema Claro/Escuro/Sistema, cor dinâmica e língua (Seguir o sistema · PT-PT · PT-BR · EN), aplicadas de imediato e persistidas no DataStore.
-- Navegação: rota `settings` em full screen (bottom bar escondida, back na `TopAppBar`); menu ⋮ ligado nos 5 destinos.
+- NavegaÃ§Ã£o: `DailyCompanyApp` com `NavigationBar` de 5 destinos + `NavHost`; 5 ecrÃ£s vazios (`today`, `tasks`, `events`, `wardrobe`, `outfits`) com `EmptyState`.
+- Componentes partilhados: `TopAppBarWithSettings` (menu â‹® â†’ DefiniÃ§Ãµes) e `SectionHeader`.
+- EcrÃ£ **DefiniÃ§Ãµes**: `SettingsViewModel` + `SettingsRoute`/`SettingsScreen` (stateless, com preview claro/escuro) â€” tema Claro/Escuro/Sistema, cor dinÃ¢mica e lÃ­ngua (Seguir o sistema Â· PT-PT Â· PT-BR Â· EN), aplicadas de imediato e persistidas no DataStore.
+- NavegaÃ§Ã£o: rota `settings` em full screen (bottom bar escondida, back na `TopAppBar`); menu â‹® ligado nos 5 destinos.
 - `.gitignore` da raiz (gradle, `.kotlin/`, keys, APKs).
 
-**Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` — usam-se as do sistema.
+**Nota pendente (fase visual):** empacotar as fontes Outfit/Inter em `res/font/` â€” usam-se as do sistema.
 
-**Fase 1 — Tarefas (em curso 🔶, código + testes concluídos, falta validar em dispositivo)**
-- `feature/tasks/` — `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/Próximas/Sem data/Concluídas; snackbar e `contentDescription` via `AppStrings` (5 chaves novas ×3 línguas) e snackbar do ViewModel como enum `TaskSnackbar` (a UI resolve o texto).
-- Camada Room: `TaskEntity` (`tasks`, colunas `due_date`/`created_at`/`done_at` + campo `doneAt`), `TaskDao` (queries alinhadas ao schema, sem duplicados), `TaskConverters`, `AppDatabase` v1 (`exportSchema=true`, schema `1.json` regenerado — v1 nunca foi instalado, sem migração), `TaskPriorityEntity`.
+**Fase 1 â€” Tarefas (em curso ðŸ”¶, cÃ³digo + testes concluÃ­dos, falta validar em dispositivo)**
+- `feature/tasks/` â€” `TasksRoute.kt` + `TasksViewModel.kt` com separadores Hoje/PrÃ³ximas/Sem data/ConcluÃ­das; snackbar e `contentDescription` via `AppStrings` (5 chaves novas Ã—3 lÃ­nguas) e snackbar do ViewModel como enum `TaskSnackbar` (a UI resolve o texto).
+- Camada Room: `TaskEntity` (`tasks`, colunas `due_date`/`created_at`/`done_at` + campo `doneAt`), `TaskDao` (queries alinhadas ao schema, sem duplicados), `TaskConverters`, `AppDatabase` v1 (`exportSchema=true`, schema `1.json` regenerado â€” v1 nunca foi instalado, sem migraÃ§Ã£o), `TaskPriorityEntity`.
 - `RoomTaskRepository` (mapeia `doneAt` nos dois sentidos; usa `AppClock` injetado, sem `System.currentTimeMillis()`).
-- DI consolidado: `AppDiModule` único (Room, `AppClock`, `Dispatchers.IO.limitedParallelism(2)`) + `RepositoryModule` (`@Binds` `TaskRepository`); `AppModule` removido (duplicava `AppClock`).
-- Editor de tarefas: `TaskEditRoute.kt` + `TaskEditViewModel.kt` (título, nota, data/hora com pickers, prioridade, guardar, apagar com undo) e rota `task_edit` no `DailyCompanyApp`.
-- Testes unitários (17 testes verdes): `TasksViewModelTest` (quick add, título vazio ignorado, toggle done + undo, adiar + undo, separadores), `TaskEditViewModelTest`, `TaskGroupsTest` (agrupamento Hoje/Próximas/Sem data/Concluídas), `StringsCompletenessTest` (as 3 línguas completas, sem TODO/placeholders) + `MainDispatcherRule`/`FakeTaskRepository`/`FixedClock`.
-- Lint corrigido: `Spacer(Modifier.weight(0f))` → `Spacer(Modifier.width(Spacing.xs))` em `TaskEditRoute` (`:app:lintDebug` verde).
+- DI consolidado: `AppDiModule` Ãºnico (Room, `AppClock`, `Dispatchers.IO.limitedParallelism(2)`) + `RepositoryModule` (`@Binds` `TaskRepository`); `AppModule` removido (duplicava `AppClock`).
+- Editor de tarefas: `TaskEditRoute.kt` + `TaskEditViewModel.kt` (tÃ­tulo, nota, data/hora com pickers, prioridade, guardar, apagar com undo) e rota `task_edit` no `DailyCompanyApp`.
+- Testes unitÃ¡rios (17 testes verdes): `TasksViewModelTest` (quick add, tÃ­tulo vazio ignorado, toggle done + undo, adiar + undo, separadores), `TaskEditViewModelTest`, `TaskGroupsTest` (agrupamento Hoje/PrÃ³ximas/Sem data/ConcluÃ­das), `StringsCompletenessTest` (as 3 lÃ­nguas completas, sem TODO/placeholders) + `MainDispatcherRule`/`FakeTaskRepository`/`FixedClock`.
+- Lint corrigido: `Spacer(Modifier.weight(0f))` â†’ `Spacer(Modifier.width(Spacing.xs))` em `TaskEditRoute` (`:app:lintDebug` verde).
 - Limpeza feita: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano; `*.log` no `.gitignore`.
-- **Ícone da tarefa (novo, pedido do utilizador):** `TaskIcon` (sealed `Material`/`Emoji`) no domínio com serialização `m:nome`/`e:emoji` (round-trip testado em `TaskIconTest`), campo `icon` em `Task`/`TaskEntity` (coluna `icon` na BD, migração Room **v1→v2**, schema `2.json` gerado), mapper no `RoomTaskRepository`.
-- Seletor de ícone no editor (`IconPicker`): **duas abas** — Ícones Material (14: casa, compras, refeição, ginásio, estudo, trabalho, corrida, saúde, favorito, estrela, calendário, email, telefone, check) e Emojis (16) — em grelha `FlowRow` (alvo 48dp), com opção "Sem ícone"; badge do ícone/emoji na `TaskRow` (decorativo, `contentDescription = null`). Catálogo + `materialIconVector`/`TaskIconBadge` em `feature/tasks/TaskIcons.kt`.
-- Quick-add barra: **correção de layout** — estava composta *fora* do `Scaffold` como irmã sem container, pelo que era sobreposta **no topo do ecrã** (tapava as tabs) e os `navigationBarsPadding`/`imePadding` inflavam-lhe a altura; passou para `bottomBar` do Scaffold (fixa no fundo, com o espaço reservado ao conteúdo). Padding vertical mantido em `Spacing.xs` (antes `sm`).
-- Quick-add barra (2.ª correção, feedback de inspeção): removido o `navigationBarsPadding()` interno — a barra está acima da `NavigationBar` da app, que já cobre o inset de navegação do sistema; o padding manual criava um vão vazio por baixo do campo (ficava encostado ao topo, com espaço antes da barra inferior). Mantido o `imePadding()` para subir com o teclado.
-- Feedback de inspeção (3.ª ronda): (a) **topbar com faixa vazia em cima do título/⋮** — edge-to-edge + `Scaffold` externo já consomem a status bar (`innerPadding`), mas as `TopAppBar` internas reaplicavam `statusBars` por omissão; fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings` (5 ecrãs), `TaskEditRoute` e `SettingsRoute`. (b) **quick-add com altura a mais/falta de respiro** — padding vertical `Spacing.xs` → `Spacing.sm`, conteúdo mantém-se centrado na horizontal e vertical.
-- Strings novas (×3 línguas): `tasksFieldIcon`, `tasksIconNone`, `tasksIconTabIcons`, `tasksIconTabEmojis`.
+- **Ãcone da tarefa (novo, pedido do utilizador):** `TaskIcon` (sealed `Material`/`Emoji`) no domÃ­nio com serializaÃ§Ã£o `m:nome`/`e:emoji` (round-trip testado em `TaskIconTest`), campo `icon` em `Task`/`TaskEntity` (coluna `icon` na BD, migraÃ§Ã£o Room **v1â†’v2**, schema `2.json` gerado), mapper no `RoomTaskRepository`.
+- Seletor de Ã­cone no editor (`IconPicker`): **duas abas** â€” Ãcones Material (14: casa, compras, refeiÃ§Ã£o, ginÃ¡sio, estudo, trabalho, corrida, saÃºde, favorito, estrela, calendÃ¡rio, email, telefone, check) e Emojis (16) â€” em grelha `FlowRow` (alvo 48dp), com opÃ§Ã£o "Sem Ã­cone"; badge do Ã­cone/emoji na `TaskRow` (decorativo, `contentDescription = null`). CatÃ¡logo + `materialIconVector`/`TaskIconBadge` em `feature/tasks/TaskIcons.kt`.
+- Quick-add barra: **correÃ§Ã£o de layout** â€” estava composta *fora* do `Scaffold` como irmÃ£ sem container, pelo que era sobreposta **no topo do ecrÃ£** (tapava as tabs) e os `navigationBarsPadding`/`imePadding` inflavam-lhe a altura; passou para `bottomBar` do Scaffold (fixa no fundo, com o espaÃ§o reservado ao conteÃºdo). Padding vertical mantido em `Spacing.xs` (antes `sm`).
+- Quick-add barra (2.Âª correÃ§Ã£o, feedback de inspeÃ§Ã£o): removido o `navigationBarsPadding()` interno â€” a barra estÃ¡ acima da `NavigationBar` da app, que jÃ¡ cobre o inset de navegaÃ§Ã£o do sistema; o padding manual criava um vÃ£o vazio por baixo do campo (ficava encostado ao topo, com espaÃ§o antes da barra inferior). Mantido o `imePadding()` para subir com o teclado.
+- Feedback de inspeÃ§Ã£o (3.Âª ronda): (a) **topbar com faixa vazia em cima do tÃ­tulo/â‹®** â€” edge-to-edge + `Scaffold` externo jÃ¡ consomem a status bar (`innerPadding`), mas as `TopAppBar` internas reaplicavam `statusBars` por omissÃ£o; fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings` (5 ecrÃ£s), `TaskEditRoute` e `SettingsRoute`. (b) **quick-add com altura a mais/falta de respiro** â€” padding vertical `Spacing.xs` â†’ `Spacing.sm`, conteÃºdo mantÃ©m-se centrado na horizontal e vertical.
+- Strings novas (Ã—3 lÃ­nguas): `tasksFieldIcon`, `tasksIconNone`, `tasksIconTabIcons`, `tasksIconTabEmojis`.
 - Testes: 22 verdes (5 novos: 4 de `TaskIconTest` + 1 de `onIconChange` no editor).
 
-## 4. Próximo passo (Fase 1 — Tarefas)
+**Fase 2 — Eventos (Passo 1 + Passo 2 concluídos; falta validar em dispositivo)**
+- **Passo 1 (commit `7c0ac59`)**: domínio puro de eventos — `Event.kt` (`RecurrenceRule` NONE/DAILY/WEEKLY/MONTHLY/YEARLY com `interval`/`weekDays`/`monthPosition`; `RecurrenceEnd` Never/OnDate/AfterCount; `MonthPosition`), `OccurrenceCalculator.kt` determinístico ancorado a `event.date` (clamp dia 31→fim do mês e 29-fev→28-fev antes de `atDay`; mensal "mesma posição" omite se não existir; anual 29-fev→28-fev; janelas `from..to`; fins Never/OnDate/AfterCount com corte global) e `EventOccurrenceCalculatorTest.kt` (15 testes verdes). **R6 inviolável — ocorrências nunca são gravadas, só calculadas.**
+- **Passo 2 (commit `ae11f56` + fix `068ae99`)**: Room v3→v4 — `AppDatabase` v4 (`TaskEntity`, `EventEntity`, `EventExceptionEntity`), `MIGRATION_3_4` (`CREATE TABLE events` + `event_exceptions`), `EventDao`/`EventExceptionDao`, package `data/local/event/`, schema `4.json` exportado (tabelas `events` + `event_exceptions`). `recurrence` numa única coluna serializada (R6): `NONE|1|||NEVER` por omissão, `RecurrenceRule.serialize()`/`parseRecurrenceRule`.
+- **Fix do build (commit `068ae99`)**: o commit `ae11f56` foi commitado PARTIDO (duplicado `data class RecurrenceRule` no domínio → `Redeclaration` em 54:12/96:12, `EventConverters` a duplicar `TaskConverters` → conflito Room "Multiple functions define the same conversion", e import inválido `domain.model.serialize` no `EventEntity`); removido o stub duplicado (fica o canónico com `serialize()`), apagado `EventConverters` (`@TypeConverters(TaskConverters::class)` como fonte única) e removido o import inválido. **Prova real pós-clean**: `assembleDebug` + `testDebugUnitTest` (46 testes, 0 falhas, 0 erros) verdes com JDK 21; o registo anterior de "52/52" foi artefacto de flood, não existiu.
 
-1. Testar a app em dispositivo: criar tarefas (quick add), concluir/reabrir com undo na snackbar, adiar para amanhã, editor (data/hora/prioridade/**ícone**), separadores, **ícone/emoji na lista**, **padding/altura da quick-add bar**, **topbar sem faixa vazia por cima do título e do ⋮** e tema claro/escuro. Nota: com a migração v1→v2, uma instalação existente tem de abrir sem perder dados.
-2. **Validar visual pós-upgrade do stack** (branch `chore/upgrade-compose-stack`, ainda por fazer em dispositivo): o material3 1.4 mudou cores por omissão — `PrimaryTabRow` (indicador/container primário em vez do `TabRow` neutro antigo) e `NavigationBarItem` (label ativo agora `secondary` em vez de `onSurface`); os ícones `AutoMirrored` devem pintar igual. Se o aspeto não agradar, ajustar tokens no tema.
-3. Verificação já feita: `:app:assembleDebug` + `:app:testDebugUnitTest` (22 testes) + `:app:lintDebug` verdes (com o novo stack).
-4. Push das branches `feat/tasks-crud`, `feat/task-icons` e `chore/upgrade-compose-stack` para `origin` (aguardam OK do utilizador) e, no fim da fase, merge para `main`.
+## 4. Próximo passo (Fase 2 — Eventos)
 
-## 5. Decisões tomadas recentemente
+1. **Passo 3 da Fase 2 (Eventos)**: repositório Room de eventos (`RoomEventRepository` + `EventRepository` com expansão via `OccurrenceCalculator`), DI (Hilt), ViewModels e ecrãs de lista/edição de eventos (rota `events` + `event_edit`), com textos via `AppStrings` (3 línguas) e tokens do tema.
+2. Depois: testar em dispositivo a Fase 1 (tarefas) e a Fase 2 (criar evento repetido, ver ocorrências na agenda), e revalidar o visual pós-upgrade do stack.
+3. Merge/push de `feat/events` e das branches da Fase 1 para `main` aguardam OK do utilizador (nunca `push --force`).
 
-| Data | Decisão |
+## 5. DecisÃµes tomadas recentemente
+
+| Data | DecisÃ£o |
 |---|---|
 | 2026-09-20 | Scaffold Android integrado na raiz; package `com.dailycompany`; `minSdk` 26. |
 | 2026-09-20 | Stack base aprovada pelo utilizador: Hilt+KSP, DataStore, Navigation, splash, `material-icons-extended`. |
 | 2026-09-20 | Fontes Outfit/Inter adiadas para a fase visual; usa-se a do sistema com os mesmos pesos. |
-| 2026-09-20 | Criado `PROGRESS.md` e skill `project-progress-tracker` para registo obrigatório de progresso. |
+| 2026-09-20 | Criado `PROGRESS.md` e skill `project-progress-tracker` para registo obrigatÃ³rio de progresso. |
 | 2026-09-20 | Builds no PC exigem `JAVA_HOME` a apontar para um JDK 21 (JBR do Android Studio ou `jdk-21`); o JDK 25 da PATH parte o Kotlin script compiler do Gradle 8.13. |
-| 2026-09-20 | `DailyCompanyTheme` deixou de substituir `LocalContext` por `createConfigurationContext(...)`: causava `IllegalStateException: Expected an activity context ...` no `hiltViewModel()` do ecrã Definições. O locale passa por `LocalConfiguration` + `LocalAppLocale`. |
+| 2026-09-20 | `DailyCompanyTheme` deixou de substituir `LocalContext` por `createConfigurationContext(...)`: causava `IllegalStateException: Expected an activity context ...` no `hiltViewModel()` do ecrÃ£ DefiniÃ§Ãµes. O locale passa por `LocalConfiguration` + `LocalAppLocale`. |
 | 2026-09-20 | Skills `project-folder-organizer` e `app-code-organizer` adicionadas; `check_structure.py` movido para a skill. |
-| 2026-09-20 | Criação do `AGENTS.md` com a regra de carregar `kotlin-compose-android` em qualquer tarefa de código. |
-| 2026-09-22 | Branch `feat/fase-1-tarefas` criada para a Fase 1 (Tarefas). Os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo por engano — pendente de limpeza com aprovação. |
-| 2026-09-22 | Diagnóstico do build: Room KSP "no such column: created_at/done_at/due_date" — as `@Query` do `TaskDao` usam snake_case mas o `TaskEntity` (sem `@ColumnInfo`) gera colunas camelCase (schema v1 confirmado). |
-| 2026-09-22 | Otimização anti-conflito dos docs/skills (decisão desta tarefa): texto de ecrãs só via `AppStrings` (removeu-se a contradição `strings.xml` do AGENTS/PROJECT/skills), prefixos de branch padronizados (`feat/`/`exp/`), criadas as skills em falta `android-hilt-di`, `android-compose-ui-design`, `android-images-media`, ordem de autoridade clarificada no `AGENTS.md`, `app-code-organizer` alinhado à estrutura real, `android-wardrobe-outfits` reescrito com R1–R5/R13. |
-| 2026-09-22 | Adicionado workflow GitHub Actions `opencode.yml` (reage a `/opencode` ou `/oc` em comentários de issues e PRs) — dev tooling, não afeta o offline-first da app. Commit automático no fim de cada tarefa (sem pedir autorização) explícito no `AGENTS.md` regra 3 e na skill `git-commit-workflow`. |
-| 2026-09-22 | Build da Fase 1 desbloqueado: `TaskEntity` alinhado ao DAO (`@ColumnInfo` `due_date`/`created_at`/`done_at` + campo `doneAt`); schema v1 regenerado (nunca instalado ⇒ sem migração); `RoomTaskRepository` com `Clock` injetado. |
-| 2026-09-22 | DI consolidado: `AppModule` apagado (duplicava `AppClock` com `AppDiModule`), providers unidos num só `AppDiModule`; novo `RepositoryModule` com `@Binds` para `TaskRepository`. |
-| 2026-09-22 | Textos visíveis das tarefas no lugar certo: snackbar como enum `TaskSnackbar` (UI resolve via `AppStrings`) e `contentDescription`/labels sem strings fixas (5 chaves novas ×3 línguas). |
-| 2026-09-22 | Workflow GitHub passou a usar provider gratuito Gemini (`GOOGLE_API_KEY` + model `google/gemini-2.5-flash`) porque o utilizador não tem IA paga. Secret `GOOGLE_API_KEY` adicionado nas Actions settings do repo. |
-| 2026-09-22 | GitHub App **OpenCode Agent** já se encontrava instalada e configurada para *All repositories* (cobre o `DailyCompany`). `opencode.yml` passou a `use_github_token: false` (token da app via OIDC) para os commits/PRs do bot aparecerem como `opencode-agent`, em vez de `GITHUB_TOKEN`. |
-| 2026-09-22 | Ícone de tarefa pedido pelo utilizador: tipo `TaskIcon` (Material/Emoji) com serialização estável (`m:`/`e:`) em vez de guardar enum/UI na BD, e migração Room v1→v2 (`ALTER TABLE`) em vez de destruir dados. |
+| 2026-09-20 | CriaÃ§Ã£o do `AGENTS.md` com a regra de carregar `kotlin-compose-android` em qualquer tarefa de cÃ³digo. |
+| 2026-09-22 | Branch `feat/fase-1-tarefas` criada para a Fase 1 (Tarefas). Os commits "." gravaram ~36 ficheiros de debug (logs/txt) no repo por engano â€” pendente de limpeza com aprovaÃ§Ã£o. |
+| 2026-09-22 | DiagnÃ³stico do build: Room KSP "no such column: created_at/done_at/due_date" â€” as `@Query` do `TaskDao` usam snake_case mas o `TaskEntity` (sem `@ColumnInfo`) gera colunas camelCase (schema v1 confirmado). |
+| 2026-09-22 | OtimizaÃ§Ã£o anti-conflito dos docs/skills (decisÃ£o desta tarefa): texto de ecrÃ£s sÃ³ via `AppStrings` (removeu-se a contradiÃ§Ã£o `strings.xml` do AGENTS/PROJECT/skills), prefixos de branch padronizados (`feat/`/`exp/`), criadas as skills em falta `android-hilt-di`, `android-compose-ui-design`, `android-images-media`, ordem de autoridade clarificada no `AGENTS.md`, `app-code-organizer` alinhado Ã  estrutura real, `android-wardrobe-outfits` reescrito com R1â€“R5/R13. |
+| 2026-09-22 | Adicionado workflow GitHub Actions `opencode.yml` (reage a `/opencode` ou `/oc` em comentÃ¡rios de issues e PRs) â€” dev tooling, nÃ£o afeta o offline-first da app. Commit automÃ¡tico no fim de cada tarefa (sem pedir autorizaÃ§Ã£o) explÃ­cito no `AGENTS.md` regra 3 e na skill `git-commit-workflow`. |
+| 2026-09-22 | Build da Fase 1 desbloqueado: `TaskEntity` alinhado ao DAO (`@ColumnInfo` `due_date`/`created_at`/`done_at` + campo `doneAt`); schema v1 regenerado (nunca instalado â‡’ sem migraÃ§Ã£o); `RoomTaskRepository` com `Clock` injetado. |
+| 2026-09-22 | DI consolidado: `AppModule` apagado (duplicava `AppClock` com `AppDiModule`), providers unidos num sÃ³ `AppDiModule`; novo `RepositoryModule` com `@Binds` para `TaskRepository`. |
+| 2026-09-22 | Textos visÃ­veis das tarefas no lugar certo: snackbar como enum `TaskSnackbar` (UI resolve via `AppStrings`) e `contentDescription`/labels sem strings fixas (5 chaves novas Ã—3 lÃ­nguas). |
+| 2026-09-22 | Workflow GitHub passou a usar provider gratuito Gemini (`GOOGLE_API_KEY` + model `google/gemini-2.5-flash`) porque o utilizador nÃ£o tem IA paga. Secret `GOOGLE_API_KEY` adicionado nas Actions settings do repo. |
+| 2026-09-22 | GitHub App **OpenCode Agent** jÃ¡ se encontrava instalada e configurada para *All repositories* (cobre o `DailyCompany`). `opencode.yml` passou a `use_github_token: false` (token da app via OIDC) para os commits/PRs do bot aparecerem como `opencode-agent`, em vez de `GITHUB_TOKEN`. |
+| 2026-09-22 | Ãcone de tarefa pedido pelo utilizador: tipo `TaskIcon` (Material/Emoji) com serializaÃ§Ã£o estÃ¡vel (`m:`/`e:`) em vez de guardar enum/UI na BD, e migraÃ§Ã£o Room v1â†’v2 (`ALTER TABLE`) em vez de destruir dados. |
+| 2026-09-24 | Passo 2 da Fase 2 reparado (commit `068ae99`): o commit `ae11f56` foi commitado PARTIDO (duplicado `RecurrenceRule` no domínio, `EventConverters` a duplicar `TaskConverters`, import inválido de `serialize`). `EventConverters` apagado (uma só fonte de conversões java.time — Room identifica conversores pelo par de tipos, `@JvmName` não resolve o conflito); o `RecurrenceRule` canónico (com `serialize()` / `parseRecurrenceRule`) fica no domínio. |
 
-## 6. Registo cronológico
+## 6. Registo cronolÃ³gico
 
 | Data | O que mudou |
 |---|---|
-| 2026-09-20 | Fase 0 validada em dispositivo pelo utilizador (splash, tema claro/escuro, 5 ecrãs navegáveis). Fase 0 concluída; falta commit/merge. |
-| 2026-09-20 | Ecrã Definições (tema, cor dinâmica, língua) + `TopAppBarWithSettings` com ⋮ + `SectionHeader`; rota `settings` full screen a esconder a bottom bar, ⋮ ligado nos 5 destinos. Nomes das línguas movidos para `AppStrings`. Build + testes + lint verdes (com `JAVA_HOME` apontando a JDK 21 — o JDK 25 da PATH parte o script compiler do Gradle). |
-| 2026-09-20 | Corrigido crash ao abrir Definições: o tema substituía `LocalContext` por um contexto sem Activity, partindo o `hiltViewModel()`. Removido o override; build + testes + lint verdes. Falta revalidar em dispositivo. |
-| 2026-09-20 | Fase 0: scaffold movido para a raiz, package `com.dailycompany`, Hilt/DataStore/Navigation/splash adicionados, tema claro/escuro com tokens do DESIGN.md, 3 línguas completas, navegação com 5 ecrãs vazios. Build + testes + lint verdes. |
-| 2026-09-20 | Fase 0 iniciada: documentação completa, skills prontas, `exemplos/` criado. Sem código Android ainda. |
+| 2026-09-20 | Fase 0 validada em dispositivo pelo utilizador (splash, tema claro/escuro, 5 ecrÃ£s navegÃ¡veis). Fase 0 concluÃ­da; falta commit/merge. |
+| 2026-09-20 | EcrÃ£ DefiniÃ§Ãµes (tema, cor dinÃ¢mica, lÃ­ngua) + `TopAppBarWithSettings` com â‹® + `SectionHeader`; rota `settings` full screen a esconder a bottom bar, â‹® ligado nos 5 destinos. Nomes das lÃ­nguas movidos para `AppStrings`. Build + testes + lint verdes (com `JAVA_HOME` apontando a JDK 21 â€” o JDK 25 da PATH parte o script compiler do Gradle). |
+| 2026-09-20 | Corrigido crash ao abrir DefiniÃ§Ãµes: o tema substituÃ­a `LocalContext` por um contexto sem Activity, partindo o `hiltViewModel()`. Removido o override; build + testes + lint verdes. Falta revalidar em dispositivo. |
+| 2026-09-20 | Fase 0: scaffold movido para a raiz, package `com.dailycompany`, Hilt/DataStore/Navigation/splash adicionados, tema claro/escuro com tokens do DESIGN.md, 3 lÃ­nguas completas, navegaÃ§Ã£o com 5 ecrÃ£s vazios. Build + testes + lint verdes. |
+| 2026-09-20 | Fase 0 iniciada: documentaÃ§Ã£o completa, skills prontas, `exemplos/` criado. Sem cÃ³digo Android ainda. |
 | 2026-09-22 | Build da Fase 1 a falhar: Room KSP rejeita as queries do `TaskDao` (colunas snake_case vs schema camelCase). Estado completo documentado no `continuar.txt`. |
-| 2026-09-22 | Otimização anti-conflito dos `.md`: removida a contradição `strings.xml` vs `AppStrings` (AGENTS.md §3.5, PROJECT.md §13, skills `kotlin-compose-android`, `android-daily-planner`, `android-alarms-notifications`, `android-recurring-events-dates`), prefixos de branch alinhados (`feat/`/`exp/` no `git-commit-workflow`), 3 skills em falta criadas, `app-code-organizer` alinhado ao `AGENTS.md` §2, `android-wardrobe-outfits` reescrito com o modelo real (R1–R5/R13). |
-| 2026-09-22 | Workflow GitHub Actions `opencode.yml` criado (manual, porque esta versão do CLI não tem `opencode github install`) + skill `git-commit-workflow` e AGENTS.md regra 3 ajustados: commits no fim de cada tarefa **sem pedir autorização**; só merge/push/tag, apagar branches e operações destrutivas exigem OK explícito. |
-| 2026-09-22 | Limpeza: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano (estado preservado em `PROGRESS.md` e no histórico git); `*.log` adicionado ao `.gitignore`. |
-| 2026-09-22 | Build da Fase 1 desbloqueado: `assembleDebug` + `testDebugUnitTest` + `lintDebug` verdes. Corrigidos `TaskEntity`/`TaskDao` (colunas + duplicado), `RoomTaskRepository` (`doneAt`, `Clock` injetado), `TasksViewModel`/`TasksRoute` (imports, visibilidade, âmbitos), i18n da snackbar/a11y, e DI consolidado. Nota: o JBR do Android Studio desta máquina é Java 25 — o build usa `C:\Program Files\Java\jdk-21`. |
-| 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grátis) — pronto a usar com `/opencode` em issues/PRs. |
-| 2026-09-22 | Verificada a instalação da GitHub App OpenCode Agent (*All repositories* — o repo fica coberto); `opencode.yml` com `use_github_token: false` para os commits/PRs do bot saírem como `opencode-agent` via token OIDC da app. |
-| 2026-09-22 | Fase 1 concluída em código, commitada e sincronizada em `feat/tasks-crud` (commit `6c5a406` do bot — mensagem só "." por ser commit automático; trabalho completo da fase): CRUD de tarefas com editor (data/hora/prioridade), undo em progredir/adiar/apagar, separadores, testes unitários (17, verdes: Tasks/TaskEdit/groupTasks/completude das 3 línguas). `assembleDebug` + `lintDebug` + `testDebugUnitTest` verdes após corrigir `weight(0f)` num `Spacer` no editor. Falta: teste em dispositivo + OK para push/merge. |
-| 2026-09-22 | Branch `feat/task-icons` criada (a partir de `feat/tasks-crud`): ícone de tarefa (Ícones Material + Emojis, duas abas no editor, badge na lista, migração Room v1→v2 com `ALTER TABLE tasks ADD COLUMN icon`, `TaskIcon` com round-trip testado) + fix do padding vertical da quick-add barra. 22 testes, `assembleDebug` + `lintDebug` verdes. Falta: teste em dispositivo + OK para push/merge. |
-| 2026-09-22 | Feedback de inspeção na aba Tarefas: (1) quick-add barra com vão vazio por baixo do campo — removido o `navigationBarsPadding()` interno (a `NavigationBar` da app já cobre o inset do sistema); `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes. (2) Aviso do Android Studio: `compose.ui:ui` resolvido para **1.9.2** por elevação transitiva do `lifecycle` 2.10.0 (pede Compose 1.9.x), acima do BOM 2024.09.00 (1.7.0) — sugestão de upgrade para 1.11.0; decisão pendente do utilizador (mudança de build grande). |
-| 2026-09-22 | Upgrade do stack (aprovado pelo utilizador, branch `chore/upgrade-compose-stack`): **Compose BOM 2026.04.01** (ui/foundation/animation/material3 1.11.0/1.4.0 — resolve o aviso do Studio, `ui` deixa de ser 1.9.2 transitiva), **Kotlin 2.3.21** + **KSP 2.3.12**, **Room 2.8.4** (KSP2-safe), **Hilt 2.58** (última linha compatível com AGP 8.x e com o fix de metadata Kotlin 2.3; a 2.59+ exige AGP 9). Migrações de código exigidas: `kotlinOptions` → DSL `compilerOptions` (erro no Kotlin 2.3), `TabRow` → `PrimaryTabRow` (deprecated no material3 1.4), `Icons.Outlined.DirectionsRun` → variante `AutoMirrored`, `!!` desnecessário removido, `@param:ApplicationContext` (KT-73255). `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes sem avisos. Falta: validar visual em dispositivo. |
-| 2026-09-22 | Feedback de inspeção (3.ª ronda, branch `chore/upgrade-compose-stack`): **topbar** com faixa vazia em cima do título/⋮ (edge-to-edge: `Scaffold` externo já consome a status bar; `TopAppBar` internas reaplicavam `statusBars` — fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings`, `TaskEditRoute` e `SettingsRoute`) e **quick-add** com altura aumentada (`Spacing.xs` → `sm`, conteúdo centrado). `assembleDebug` + `lintDebug` verdes. Falta revalidar em dispositivo. |
-| 2026-09-22 | Fase 1 — **repetição de tarefas** (branch `feat/task-recurrence`): `TaskRepeat` de domínio (NONE/DAILY/WEEKLY/MONTHLY/YEARLY) com `nextDueDate()` puro modelado (clamp dia 31 → fim do mês e 29-fev → 28-fev; roll-forward a partir da base original, corrigia o bug que encadeava candidatos e devolvia Mar 28 em vez de Mar 31), concluir repetitiva avança para a próxima ocorrência com undo, seletor no editor (FilterChips), badge de repetição na lista, **emoji livre** (campo de texto no editor — substitui a grelha fixa) e migração Room v2→v3 (`ALTER TABLE tasks ADD COLUMN repeat`) com schema `3.json` versionado. Strings nas 3 línguas. `assembleDebug` + 31 testes + `lintDebug` verdes. Falta: validar em dispositivo.
+| 2026-09-22 | OtimizaÃ§Ã£o anti-conflito dos `.md`: removida a contradiÃ§Ã£o `strings.xml` vs `AppStrings` (AGENTS.md Â§3.5, PROJECT.md Â§13, skills `kotlin-compose-android`, `android-daily-planner`, `android-alarms-notifications`, `android-recurring-events-dates`), prefixos de branch alinhados (`feat/`/`exp/` no `git-commit-workflow`), 3 skills em falta criadas, `app-code-organizer` alinhado ao `AGENTS.md` Â§2, `android-wardrobe-outfits` reescrito com o modelo real (R1â€“R5/R13). |
+| 2026-09-22 | Workflow GitHub Actions `opencode.yml` criado (manual, porque esta versÃ£o do CLI nÃ£o tem `opencode github install`) + skill `git-commit-workflow` e AGENTS.md regra 3 ajustados: commits no fim de cada tarefa **sem pedir autorizaÃ§Ã£o**; sÃ³ merge/push/tag, apagar branches e operaÃ§Ãµes destrutivas exigem OK explÃ­cito. |
+| 2026-09-22 | Limpeza: removidos os 29 ficheiros de debug (`.log`/`.txt`) commitados por engano (estado preservado em `PROGRESS.md` e no histÃ³rico git); `*.log` adicionado ao `.gitignore`. |
+| 2026-09-22 | Build da Fase 1 desbloqueado: `assembleDebug` + `testDebugUnitTest` + `lintDebug` verdes. Corrigidos `TaskEntity`/`TaskDao` (colunas + duplicado), `RoomTaskRepository` (`doneAt`, `Clock` injetado), `TasksViewModel`/`TasksRoute` (imports, visibilidade, Ã¢mbitos), i18n da snackbar/a11y, e DI consolidado. Nota: o JBR do Android Studio desta mÃ¡quina Ã© Java 25 â€” o build usa `C:\Program Files\Java\jdk-21`. |
+| 2026-09-22 | Secret `GOOGLE_API_KEY` adicionado no GitHub e `opencode.yml` atualizado para Gemini (grÃ¡tis) â€” pronto a usar com `/opencode` em issues/PRs. |
+| 2026-09-22 | Verificada a instalaÃ§Ã£o da GitHub App OpenCode Agent (*All repositories* â€” o repo fica coberto); `opencode.yml` com `use_github_token: false` para os commits/PRs do bot saÃ­rem como `opencode-agent` via token OIDC da app. |
+| 2026-09-22 | Fase 1 concluÃ­da em cÃ³digo, commitada e sincronizada em `feat/tasks-crud` (commit `6c5a406` do bot â€” mensagem sÃ³ "." por ser commit automÃ¡tico; trabalho completo da fase): CRUD de tarefas com editor (data/hora/prioridade), undo em progredir/adiar/apagar, separadores, testes unitÃ¡rios (17, verdes: Tasks/TaskEdit/groupTasks/completude das 3 lÃ­nguas). `assembleDebug` + `lintDebug` + `testDebugUnitTest` verdes apÃ³s corrigir `weight(0f)` num `Spacer` no editor. Falta: teste em dispositivo + OK para push/merge. |
+| 2026-09-22 | Branch `feat/task-icons` criada (a partir de `feat/tasks-crud`): Ã­cone de tarefa (Ãcones Material + Emojis, duas abas no editor, badge na lista, migraÃ§Ã£o Room v1â†’v2 com `ALTER TABLE tasks ADD COLUMN icon`, `TaskIcon` com round-trip testado) + fix do padding vertical da quick-add barra. 22 testes, `assembleDebug` + `lintDebug` verdes. Falta: teste em dispositivo + OK para push/merge. |
+| 2026-09-22 | Feedback de inspeÃ§Ã£o na aba Tarefas: (1) quick-add barra com vÃ£o vazio por baixo do campo â€” removido o `navigationBarsPadding()` interno (a `NavigationBar` da app jÃ¡ cobre o inset do sistema); `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes. (2) Aviso do Android Studio: `compose.ui:ui` resolvido para **1.9.2** por elevaÃ§Ã£o transitiva do `lifecycle` 2.10.0 (pede Compose 1.9.x), acima do BOM 2024.09.00 (1.7.0) â€” sugestÃ£o de upgrade para 1.11.0; decisÃ£o pendente do utilizador (mudanÃ§a de build grande). |
+| 2026-09-22 | Upgrade do stack (aprovado pelo utilizador, branch `chore/upgrade-compose-stack`): **Compose BOM 2026.04.01** (ui/foundation/animation/material3 1.11.0/1.4.0 â€” resolve o aviso do Studio, `ui` deixa de ser 1.9.2 transitiva), **Kotlin 2.3.21** + **KSP 2.3.12**, **Room 2.8.4** (KSP2-safe), **Hilt 2.58** (Ãºltima linha compatÃ­vel com AGP 8.x e com o fix de metadata Kotlin 2.3; a 2.59+ exige AGP 9). MigraÃ§Ãµes de cÃ³digo exigidas: `kotlinOptions` â†’ DSL `compilerOptions` (erro no Kotlin 2.3), `TabRow` â†’ `PrimaryTabRow` (deprecated no material3 1.4), `Icons.Outlined.DirectionsRun` â†’ variante `AutoMirrored`, `!!` desnecessÃ¡rio removido, `@param:ApplicationContext` (KT-73255). `assembleDebug` + `testDebugUnitTest` (22) + `lintDebug` verdes sem avisos. Falta: validar visual em dispositivo. |
+| 2026-09-22 | Feedback de inspeÃ§Ã£o (3.Âª ronda, branch `chore/upgrade-compose-stack`): **topbar** com faixa vazia em cima do tÃ­tulo/â‹® (edge-to-edge: `Scaffold` externo jÃ¡ consome a status bar; `TopAppBar` internas reaplicavam `statusBars` â€” fix `windowInsets = WindowInsets(0.dp)` em `TopAppBarWithSettings`, `TaskEditRoute` e `SettingsRoute`) e **quick-add** com altura aumentada (`Spacing.xs` â†’ `sm`, conteÃºdo centrado). `assembleDebug` + `lintDebug` verdes. Falta revalidar em dispositivo. |
+| 2026-09-22 | Fase 1 â€” **repetiÃ§Ã£o de tarefas** (branch `feat/task-recurrence`): `TaskRepeat` de domÃ­nio (NONE/DAILY/WEEKLY/MONTHLY/YEARLY) com `nextDueDate()` puro modelado (clamp dia 31 â†’ fim do mÃªs e 29-fev â†’ 28-fev; roll-forward a partir da base original, corrigia o bug que encadeava candidatos e devolvia Mar 28 em vez de Mar 31), concluir repetitiva avanÃ§a para a prÃ³xima ocorrÃªncia com undo, seletor no editor (FilterChips), badge de repetiÃ§Ã£o na lista, **emoji livre** (campo de texto no editor â€” substitui a grelha fixa) e migraÃ§Ã£o Room v2â†’v3 (`ALTER TABLE tasks ADD COLUMN repeat`) com schema `3.json` versionado. Strings nas 3 lÃ­nguas. `assembleDebug` + 31 testes + `lintDebug` verdes. Falta: validar em dispositivo.
+| 2026-09-23 | Fase 2 â€” **Passo 1 (Eventos) concluÃ­do** (branch `feat/events`, commit `7c0ac59`): `Event.kt` (domÃ­nio puro `java.time`: `RecurrenceRule` NONE/DAILY/WEEKLY/MONTHLY/YEARLY com `interval`/`weekDays`/`monthPosition`, `RecurrenceEnd` Never/OnDate/AfterCount, `MonthPosition`), `OccurrenceCalculator.kt` **determinÃ­stico e ancorado a `event.date`** (clamp mensal dia 31â†’fim do mÃªs e 29-fevâ†’28-fev antes de `atDay`; "mesma posiÃ§Ã£o" mensal omite se nÃ£o existir; anual 29-fevâ†’28-fev; janelas `from..to`; fins Never/OnDate/AfterCount com corte global; **R6 inviolÃ¡vel â€” ocorrÃªncias nunca sÃ£o gravadas, sÃ³ calculadas**) e `EventOccurrenceCalculatorTest.kt` (15 testes, verdes). `testDebugUnitTest` (15/15) + `assembleDebug` verdes. Falta: validar em dispositivo; o Passo 2 (Room v3â†’v4 + repositÃ³rios + UI) Ã© o prÃ³ximo; merge/push aguarda OK. |
+| 2026-09-23 | Fase 2 — **Passo 2 (Eventos) concluído** (branch feat/events, commit ae11f56): Room v3->v4 — AppDatabase version=4 entities=[TaskEntity, EventEntity, EventExceptionEntity], @TypeConverters(TaskConverters, EventConverters), MIGRATION_3_4 (CREATE TABLE events + event_exceptions), eventDao()/eventExceptionDao(); EventConverters (java.time LocalDate/LocalTime/Duration + RecurrenceRule -> String com serialize()/parseRecurrenceRule); package data/local/event/ (EventEntity, EventExceptionEntity, EventDao, EventExceptionDao, EventConverters); schema 4.json exportado (tabelas events + event_exceptions). assembleDebug + testDebugUnitTest (52/52, 0 falhas) verdes. R6 inviolavel — ocorrencias nunca gravadas. Falta: Passo 3 (repositorio+DI+VM+lista/edicao) + validar em dispositivo; merge/push aguarda OK. |
+| 2026-09-23 | Fase 2 â€” **Passo 1 (Eventos) concluÃ­do** (branch `feat/events`, commit `7c0ac59`): domÃ­nio puro `Event.kt` (`RecurrenceRule` NONE/DAILY/WEEKLY/MONTHLY/YEARLY + `interval`/`weekDays`/`monthPosition`; `RecurrenceEnd` Never/OnDate/AfterCount; `MonthPosition`), `OccurrenceCalculator.kt` determinÃ­stico ancorado a `event.date` (clamp dia 31 â†’ fim do mÃªs e 29-fev â†’ 28-fev **antes** de `atDay`; mensal "mesma posiÃ§Ã£o" omite se nÃ£o existir; anual aniversÃ¡rio; janelas `from..to`; fins Never/OnDate/AfterCount com corte global; **R6 inviolÃ¡vel â€” nunca grava ocorrÃªncias**) e `EventOccurrenceCalculatorTest.kt` (15 testes verdes). `testDebugUnitTest` (15/15) + `assembleDebug` verdes. Falta: Passo 2 (Room v3â†’v4) + validar em dispositivo; merge/push aguarda OK. |
+| 2026-09-24 | Fase 2 — **Passo 2 (Eventos) reparado** (branch `feat/events`, commit `068ae99`): o commit `ae11f56` tinha sido commitado PARTIDO e **nunca compilou** — o registo anterior de "52/52 testes verdes" era artefacto de flood, não existiu. Diagnosticado deterministicamente: `RecurrenceRule` declarado 2× no domínio (`Redeclaration` em 54:12/96:12), `EventConverters` duplicava `TaskConverters` (conflito Room "Multiple functions define the same conversion") e `EventEntity` importava `serialize` como top-level (é membro). Fix mínimo: removido o stub duplicado (fica o canónico com `serialize()`/`parseRecurrenceRule`), apagado `EventConverters` (`@TypeConverters(TaskConverters::class)` como fonte única) e removido o import inválido. **Prova real (clean, JDK 21)**: `assembleDebug` + `testDebugUnitTest` verdes — **46 testes, 0 falhas, 0 erros, 0 skipped** (contagem real no XML); schema `4.json` no disco com `events`+`event_exceptions` sem colunas de ocorrências (R6). Falta: Passo 3 (repositório + DI + VM + lista/edição) + validar em dispositivo; merge/push aguarda OK. |
 
 ---
 
-**Regra:** nunca terminar uma tarefa sem atualizar as secções 3, 5 ou 6 deste ficheiro se o estado do projeto mudou.
+**Regra:** nunca terminar uma tarefa sem atualizar as secÃ§Ãµes 3, 5 ou 6 deste ficheiro se o estado do projeto mudou.
