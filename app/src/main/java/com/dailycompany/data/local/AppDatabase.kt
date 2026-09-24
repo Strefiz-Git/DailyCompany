@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.dailycompany.data.local.event.EventConverters
 import com.dailycompany.data.local.event.EventDao
 import com.dailycompany.data.local.event.EventEntity
 import com.dailycompany.data.local.event.EventExceptionDao
@@ -33,7 +32,7 @@ import com.dailycompany.data.local.task.TaskEntity
     version = 4,
     exportSchema = true,
 )
-@TypeConverters(TaskConverters::class, EventConverters::class)
+@TypeConverters(TaskConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao

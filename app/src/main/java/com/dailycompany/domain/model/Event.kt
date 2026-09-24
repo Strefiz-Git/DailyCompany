@@ -41,30 +41,6 @@ sealed interface RecurrenceEnd {
 }
 
 /**
- * Regra de repetição de um evento — domínio puro, serializado como String
- * para uma única coluna Room (formato estável em [serialize]/[parseRecurrenceRule],
- * espelhando a convenção `TaskIcon.serialize()`).
- *
- * Modelo de decisões (documentado):
- * - [interval] ≥ 1 é "cada N" unidades da [frequency] (ex.: mensal cada 2 meses).
- * - [weekDays] só faz sentido em WEEKLY ("dias da semana": seg, qua, sex).
- * - [monthPosition] só em MONTHLY quando se repete "na mesma posição".
- * - Fim: nunca / numa data / após N ocorrências (nunca armazenado).
- */
-data class RecurrenceRule(
-    val frequency: EventFrequency = EventFrequency.NONE,
-    val interval: Int = 1,
-    val weekDays: Set<DayOfWeek> = emptySet(),
-    val monthPosition: MonthPosition? = null,
-    val end: RecurrenceEnd = RecurrenceEnd.Never,
-) {
-
-    init {
-        require(interval >= 1) { "interval deve ser >= 1 (era $interval)" }
-    }
-}
-
-/**
  * Evento — modelo de domínio puro (java.time, sem Android/Room).
  * A ocorrência é calculada por [OccurrenceCalculator]; nunca gravada (R6).
  */

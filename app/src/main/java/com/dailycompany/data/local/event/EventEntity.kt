@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dailycompany.domain.model.RecurrenceRule
 import com.dailycompany.domain.model.parseRecurrenceRule
-import com.dailycompany.domain.model.serialize
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -24,9 +23,9 @@ data class EventEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val uid: String,
     val title: String,
-    /** ISO-8601 (`yyyy-MM-dd`), via [EventConverters]. */
+    /** ISO-8601 (`yyyy-MM-dd`), via [TaskConverters]. */
     val date: LocalDate,
-    /** ISO-8601 (`HH:mm`), via [EventConverters]; nulo = sem hora definida. */
+    /** ISO-8601 (`HH:mm`), via [TaskConverters]; nulo = sem hora definida. */
     val time: LocalTime? = null,
     @ColumnInfo(name = "is_all_day") val isAllDay: Boolean = false,
     val location: String? = null,
