@@ -245,8 +245,11 @@ interface AppStrings {
     val eventsFieldOccurrences: String
     val eventsFieldReminder: String
     val eventsEmpty: String
+    val eventsDayEmpty: String
     val eventsViewList: String
     val eventsViewCalendar: String
+    val eventsPrevMonth: String
+    val eventsNextMonth: String
     val recurrenceNever: String
     val recurrenceDaily: String
     val recurrenceWeekdays: String
