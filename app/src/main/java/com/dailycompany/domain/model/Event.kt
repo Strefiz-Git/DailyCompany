@@ -81,3 +81,63 @@ data class Event(
     val recurrence: RecurrenceRule = RecurrenceRule(),
     val createdAt: LocalDateTime,
 )
+
+/**
+ * Serializa a regra para uma **única** coluna Room (R6: a regra é gravada, a
+ * ocorrência **nunca**). Formato estável, espelhando `TaskIcon.serialize()`:
+ * segmento por `|`, nomes de enum como no código.
+ *
+ * `fv|interval|weekDays|campo posição|fim` — ex.:
+ * `"MONTHLY|2||3:FRIDAY|ON:2026-12-24"` (mensal cada 2, 3.ª sexta, até 24-dez).
+ * - `weekDays`: nomes `DAY_OF_WEEK` separados por `,` (vazio = nenhum).
+ * - posição: `ordinal:DayOfWeek` (ex.: `3:FRIDAY`, `-1:SUNDAY`); vazio = nula.
+ * - fim: `NEVER` · `ON:yyyy-MM-dd` · `AFTER:count`.
+ */
+data class RecurrenceRule(
+    val frequency: EventFrequency = EventFrequency.NONE,
+    val interval: Int = 1,
+    val weekDays: Set<DayOfWeek> = emptySet(),
+    val monthPosition: MonthPosition? = null,
+    val end: RecurrenceEnd = RecurrenceEnd.Never,
+) {
+    /** Formato estável (ver KDoc do tipo). */
+    fun serialize(): String = buildString {
+        append(frequency.name)
+        append('|').append(interval)
+        append('|').append(weekDays.joinToString(",") { it.name })
+        append('|').append(monthPosition?.let { "${it.ordinal}:${it.dayOfWeek.name}" } ?: "")
+        append('|').append(
+            when (val e = end) {
+                is RecurrenceEnd.Never -> "NEVER"
+                is RecurrenceEnd.OnDate -> "ON:${e.date}"
+                is RecurrenceEnd.AfterCount -> "AFTER:${e.count}"
+            }
+        )
+    }
+}
+
+/**
+ * Lê da coluna Room; valores nulos/malformados devolvem a regra predefinida
+ * ([RecurrenceRule] sem repetição) — nunca bloqueia nem grava ocorrências (R6).
+ */
+fun parseRecurrenceRule(raw: String?): RecurrenceRule = runCatching {
+    val parts = raw!!.split('|')
+    require(parts.size == 5) { "formato inválido: $raw" }
+    RecurrenceRule(
+        frequency = EventFrequency.entries.firstOrNull { it.name == parts[0] } ?: EventFrequency.NONE,
+        interval = parts[1].toInt().coerceAtLeast(1),
+        weekDays = parts[2].split(",").filter { it.isNotBlank() }.mapNotNull { name ->
+            DayOfWeek.entries.firstOrNull { it.name == name }
+        }.toSet(),
+        monthPosition = parts[3].takeIf { it.isNotBlank() }?.let { pos ->
+            val (ord, dow) = pos.split(':')
+            MonthPosition(ord.toInt(), DayOfWeek.entries.firstOrNull { it.name == dow } ?: return@let null)
+        },
+        end = when {
+            parts[4] == "NEVER" -> RecurrenceEnd.Never
+            parts[4].startsWith("ON:") -> RecurrenceEnd.OnDate(LocalDate.parse(parts[4].removePrefix("ON:")))
+            parts[4].startsWith("AFTER:") -> RecurrenceEnd.AfterCount(parts[4].removePrefix("AFTER:").toInt().coerceAtLeast(1))
+            else -> RecurrenceEnd.Never
+        },
+    )
+}.getOrDefault(RecurrenceRule())
