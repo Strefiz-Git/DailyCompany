@@ -180,6 +180,7 @@ interface AppStrings {
     val actionChoosePhoto: String
     val actionTakePhoto: String
     val actionMore: String
+    val actionHelp: String
 
     // ---- Hoje ----
     val todayGreetingMorning: String
@@ -267,8 +268,25 @@ interface AppStrings {
     // ---- Alarmes / notificações ----
     val alarmsTitle: String
     val alarmsNewTitle: String
+    val alarmsEditTitle: String
     val alarmsRepeat: String
     val alarmsEmpty: String
+    val alarmsFieldTime: String
+    val alarmsFieldLabel: String
+    val alarmsFieldSound: String
+    val alarmsFieldVibrate: String
+    val alarmsFieldAutoSnooze: String
+    val alarmsAutoSnoozeOff: String
+    fun alarmsMinutes(n: Int): String
+    val alarmsFiresOnce: String
+    val alarmsDeleted: String
+    val alarmsPermissionMissing: String
+    val alarmsPermissionGrant: String
+    val permissionHelpTitle: String
+    val permissionHelpNotifications: String
+    val permissionHelpExactAlarm: String
+    val permissionHelpBattery: String
+    val permissionHelpOpenSettings: String
     val notificationChannelAlarms: String
     val notificationChannelReminders: String
     val notificationChannelDailyBrief: String
