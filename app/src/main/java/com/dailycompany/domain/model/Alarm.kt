@@ -62,3 +62,26 @@ fun parseRepeatDays(raw: String?): Set<DayOfWeek> =
     raw.orEmpty().split("|").mapNotNull { name ->
         DayOfWeek.entries.firstOrNull { it.name == name }
     }.toSet()
+
+/**
+ * O que fazer quando um alarme dispara — decisão pura (testável) que o
+ * `AlarmReceiver` apenas executa:
+ * - repetido ([repeatDays] não vazio): [AlarmPostFire.Reschedule] para a próxima ocorrência;
+ * - de uma vez: [AlarmPostFire.Disable] (desliga-se, não volta a tocar sozinho);
+ * - [AlarmPostFire.autoSnoozeAt] preenchido quando [Alarm.autoSnoozeMinutes] > 0.
+ */
+sealed interface AlarmPostFire {
+    /** Toque extra (snooze automático), quando [Alarm.autoSnoozeMinutes] > 0. */
+    val autoSnoozeAt: LocalDateTime?
+
+    data class Reschedule(val next: LocalDateTime, override val autoSnoozeAt: LocalDateTime?) : AlarmPostFire
+    data class Disable(override val autoSnoozeAt: LocalDateTime?) : AlarmPostFire
+}
+
+/** Decisão pura após [Alarm] disparar em [now] (usada pelo receiver). */
+fun Alarm.postFireAction(now: LocalDateTime): AlarmPostFire {
+    val autoSnoozeAt =
+        if (autoSnoozeMinutes > 0) now.plusMinutes(autoSnoozeMinutes.toLong()) else null
+    return if (repeatDays.isEmpty()) AlarmPostFire.Disable(autoSnoozeAt)
+    else AlarmPostFire.Reschedule(nextTrigger(now), autoSnoozeAt)
+}
