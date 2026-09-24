@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Fase 3: notificações (Android 13+) e reagendamento após reinício. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".DailyApp"
         android:allowBackup="true"
@@ -23,6 +27,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Toques de alarmes: entregues por PendingIntent próprio (mesmo uid),
+             sem necessidade de exportação. -->
+        <receiver
+            android:name=".data.alarm.AlarmReceiver"
+            android:exported="false" />
+
+        <!-- Reagendamento após boot/mudanças de hora/fuso/atualização:
+             broadcasts protegidos do sistema exigem exported="true". -->
+        <receiver
+            android:name=".data.alarm.RescheduleReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
