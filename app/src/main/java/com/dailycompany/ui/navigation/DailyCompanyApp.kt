@@ -24,6 +24,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.dailycompany.feature.alarms.AlarmEditRoute
+import com.dailycompany.feature.alarms.AlarmsRoute
+import com.dailycompany.feature.alarms.PermissionsHelpRoute
 import com.dailycompany.feature.events.EventEditRoute
 import com.dailycompany.feature.events.EventsRoute
 import com.dailycompany.feature.outfits.OutfitsRoute
@@ -43,6 +46,9 @@ object Routes {
     const val WARDROBE = "wardrobe"
     const val OUTFITS = "outfits"
     const val SETTINGS = "settings"
+    const val ALARMS = "alarms"
+    const val ALARM_EDIT = "alarm_edit?alarmId={alarmId}"
+    const val PERMISSIONS_HELP = "permissions_help"
 }
 
 data class BottomNavItem(
@@ -136,6 +142,7 @@ fun DailyCompanyApp() {
                     onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
                     onCreateEvent = { navController.navigate("event_edit") },
                     onOpenEvent = { eventId -> navController.navigate("event_edit?eventId=$eventId") },
+                    onOpenAlarms = { navController.navigate(Routes.ALARMS) },
                 )
             }
             composable(
@@ -156,7 +163,33 @@ fun DailyCompanyApp() {
                 OutfitsRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
             }
             composable(Routes.SETTINGS) {
-                SettingsRoute(onBack = { navController.navigateUp() })
+                SettingsRoute(
+                    onBack = { navController.navigateUp() },
+                    onOpenAlarms = { navController.navigate(Routes.ALARMS) },
+                    onOpenPermissionsHelp = { navController.navigate(Routes.PERMISSIONS_HELP) },
+                )
+            }
+            composable(Routes.ALARMS) {
+                AlarmsRoute(
+                    onBack = { navController.navigateUp() },
+                    onCreate = { navController.navigate("alarm_edit") },
+                    onOpenAlarm = { alarmId -> navController.navigate("alarm_edit?alarmId=$alarmId") },
+                    onOpenHelp = { navController.navigate(Routes.PERMISSIONS_HELP) },
+                )
+            }
+            composable(
+                route = Routes.ALARM_EDIT,
+                arguments = listOf(
+                    navArgument("alarmId") {
+                        type = NavType.LongType
+                        defaultValue = 0L
+                    },
+                ),
+            ) {
+                AlarmEditRoute(onBack = { navController.navigateUp() })
+            }
+            composable(Routes.PERMISSIONS_HELP) {
+                PermissionsHelpRoute(onBack = { navController.navigateUp() })
             }
         }
     }

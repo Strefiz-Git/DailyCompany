@@ -66,12 +66,14 @@ fun EventsRoute(
     onNavigateToSettings: () -> Unit,
     onCreateEvent: () -> Unit,
     onOpenEvent: (Long) -> Unit,
+    onOpenAlarms: () -> Unit,
     viewModel: EventsViewModel = hiltViewModel(),
 ) {
     EventsScreen(
         onNavigateToSettings = onNavigateToSettings,
         onCreateEvent = onCreateEvent,
         onOpenEvent = onOpenEvent,
+        onOpenAlarms = onOpenAlarms,
         viewModel = viewModel,
     )
 }
@@ -81,6 +83,7 @@ fun EventsScreen(
     onNavigateToSettings: () -> Unit,
     onCreateEvent: () -> Unit,
     onOpenEvent: (Long) -> Unit,
+    onOpenAlarms: () -> Unit,
     viewModel: EventsViewModel,
 ) {
     val s = strings()
@@ -107,6 +110,7 @@ fun EventsScreen(
             TopAppBarWithSettings(
                 title = s.eventsTitle,
                 onNavigateToSettings = onNavigateToSettings,
+                onOpenAlarms = onOpenAlarms,
             )
         },
         floatingActionButton = {

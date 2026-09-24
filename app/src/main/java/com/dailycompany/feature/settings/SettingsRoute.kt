@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,6 +41,8 @@ import com.dailycompany.ui.theme.strings
 @Composable
 fun SettingsRoute(
     onBack: () -> Unit,
+    onOpenAlarms: () -> Unit,
+    onOpenPermissionsHelp: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -50,6 +53,8 @@ fun SettingsRoute(
         onDynamicColorChange = viewModel::setDynamicColor,
         onFollowSystemLanguage = viewModel::setFollowSystemLanguage,
         onLanguageChange = viewModel::setLanguage,
+        onOpenAlarms = onOpenAlarms,
+        onOpenPermissionsHelp = onOpenPermissionsHelp,
     )
 }
 
@@ -62,6 +67,8 @@ fun SettingsScreen(
     onDynamicColorChange: (Boolean) -> Unit,
     onFollowSystemLanguage: () -> Unit,
     onLanguageChange: (AppLanguage) -> Unit,
+    onOpenAlarms: () -> Unit,
+    onOpenPermissionsHelp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val s = strings()
@@ -146,6 +153,21 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            item { SectionHeader(title = s.actionHelp) }
+
+            item {
+                SettingsLink(
+                    label = s.alarmsTitle,
+                    onClick = onOpenAlarms,
+                )
+            }
+            item {
+                SettingsLink(
+                    label = s.permissionHelpTitle,
+                    onClick = onOpenPermissionsHelp,
+                )
+            }
         }
     }
 }
@@ -172,6 +194,32 @@ private fun ThemeOption(
     }
 }
 
+/** Linha de navegação simples (rótulo + chevron) para ligações a outros ecrãs. */
+@Composable
+private fun SettingsLink(
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = Spacing.sm, vertical = Spacing.md),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun SettingsScreenPreview() {
@@ -183,6 +231,8 @@ private fun SettingsScreenPreview() {
             onDynamicColorChange = {},
             onFollowSystemLanguage = {},
             onLanguageChange = {},
+            onOpenAlarms = {},
+            onOpenPermissionsHelp = {},
         )
     }
 }
@@ -198,6 +248,8 @@ private fun SettingsScreenDarkPreview() {
             onDynamicColorChange = {},
             onFollowSystemLanguage = {},
             onLanguageChange = {},
+            onOpenAlarms = {},
+            onOpenPermissionsHelp = {},
         )
     }
 }

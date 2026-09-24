@@ -18,12 +18,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import com.dailycompany.ui.theme.strings
 
-/** Barra superior de um ecrã de topo, com menu ⋮ do qual se chega às Definições. */
+/**
+ * Barra superior de um ecrã de topo, com menu ⋮ do qual se chega às Definições
+ * e (opcionalmente) aos Alarmes — usado pela Agenda.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarWithSettings(
     title: String,
     onNavigateToSettings: () -> Unit,
+    onOpenAlarms: (() -> Unit)? = null,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     val s = strings()
@@ -39,6 +43,15 @@ fun TopAppBarWithSettings(
                 )
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                if (onOpenAlarms != null) {
+                    DropdownMenuItem(
+                        text = { Text(text = s.alarmsTitle) },
+                        onClick = {
+                            menuOpen = false
+                            onOpenAlarms()
+                        },
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text(text = s.settingsTitle) },
                     onClick = {
