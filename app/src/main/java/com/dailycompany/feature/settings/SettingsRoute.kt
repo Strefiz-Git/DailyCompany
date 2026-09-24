@@ -41,7 +41,6 @@ import com.dailycompany.ui.theme.strings
 @Composable
 fun SettingsRoute(
     onBack: () -> Unit,
-    onOpenAlarms: () -> Unit,
     onOpenPermissionsHelp: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -53,7 +52,6 @@ fun SettingsRoute(
         onDynamicColorChange = viewModel::setDynamicColor,
         onFollowSystemLanguage = viewModel::setFollowSystemLanguage,
         onLanguageChange = viewModel::setLanguage,
-        onOpenAlarms = onOpenAlarms,
         onOpenPermissionsHelp = onOpenPermissionsHelp,
     )
 }
@@ -67,7 +65,6 @@ fun SettingsScreen(
     onDynamicColorChange: (Boolean) -> Unit,
     onFollowSystemLanguage: () -> Unit,
     onLanguageChange: (AppLanguage) -> Unit,
-    onOpenAlarms: () -> Unit,
     onOpenPermissionsHelp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -158,12 +155,6 @@ fun SettingsScreen(
 
             item {
                 SettingsLink(
-                    label = s.alarmsTitle,
-                    onClick = onOpenAlarms,
-                )
-            }
-            item {
-                SettingsLink(
                     label = s.permissionHelpTitle,
                     onClick = onOpenPermissionsHelp,
                 )
@@ -231,7 +222,6 @@ private fun SettingsScreenPreview() {
             onDynamicColorChange = {},
             onFollowSystemLanguage = {},
             onLanguageChange = {},
-            onOpenAlarms = {},
             onOpenPermissionsHelp = {},
         )
     }
@@ -248,7 +238,6 @@ private fun SettingsScreenDarkPreview() {
             onDynamicColorChange = {},
             onFollowSystemLanguage = {},
             onLanguageChange = {},
-            onOpenAlarms = {},
             onOpenPermissionsHelp = {},
         )
     }

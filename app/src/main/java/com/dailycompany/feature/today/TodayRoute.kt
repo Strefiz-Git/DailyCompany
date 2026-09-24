@@ -11,18 +11,28 @@ import com.dailycompany.ui.components.TopAppBarWithSettings
 import com.dailycompany.ui.theme.strings
 
 @Composable
-fun TodayRoute(onNavigateToSettings: () -> Unit) {
-    TodayScreen(onNavigateToSettings = onNavigateToSettings)
+fun TodayRoute(
+    onNavigateToSettings: () -> Unit,
+    onOpenAlarms: () -> Unit,
+) {
+    TodayScreen(
+        onNavigateToSettings = onNavigateToSettings,
+        onOpenAlarms = onOpenAlarms,
+    )
 }
 
 @Composable
-fun TodayScreen(onNavigateToSettings: () -> Unit) {
+fun TodayScreen(
+    onNavigateToSettings: () -> Unit,
+    onOpenAlarms: () -> Unit,
+) {
     val s = strings()
     Scaffold(
         topBar = {
             TopAppBarWithSettings(
                 title = s.navToday,
                 onNavigateToSettings = onNavigateToSettings,
+                onOpenAlarms = onOpenAlarms,
             )
         },
     ) { innerPadding ->

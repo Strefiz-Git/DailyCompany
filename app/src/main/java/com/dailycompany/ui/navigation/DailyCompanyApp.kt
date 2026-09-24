@@ -117,7 +117,10 @@ fun DailyCompanyApp() {
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Routes.TODAY) {
-                TodayRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
+                TodayRoute(
+                    onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
+                    onOpenAlarms = { navController.navigate(Routes.ALARMS) },
+                )
             }
             composable(Routes.TASKS) {
                 TasksRoute(
@@ -165,7 +168,6 @@ fun DailyCompanyApp() {
             composable(Routes.SETTINGS) {
                 SettingsRoute(
                     onBack = { navController.navigateUp() },
-                    onOpenAlarms = { navController.navigate(Routes.ALARMS) },
                     onOpenPermissionsHelp = { navController.navigate(Routes.PERMISSIONS_HELP) },
                 )
             }

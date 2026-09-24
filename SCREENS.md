@@ -29,7 +29,7 @@ MainActivity (single Activity, NavHost)
 ├── outfit_builder?outfitId={id}&random={bool}   (full screen)
 ├── outfit_detail/{outfitId}              (full screen)
 ├── categories                            (full screen, a partir de Definições ou Roupa)
-├── alarms                                (lista de alarmes, a partir de Agenda ou Definições)
+├── alarms                                (lista de alarmes, a partir de Hoje ou Agenda)
 ├── stats                                 (opcional, fase 7)
 ├── settings                              (full screen)
 │   ├── settings_backup
