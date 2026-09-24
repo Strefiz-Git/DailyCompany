@@ -233,10 +233,16 @@ interface AppStrings {
     // ---- Eventos ----
     val eventsTitle: String
     val eventsNewTitle: String
+    val eventsEditTitle: String
+    val eventsDeleted: String
     val eventsFieldTitle: String
     val eventsFieldAllDay: String
+    val eventsFieldTime: String
     val eventsFieldLocation: String
     val eventsFieldNotes: String
+    val eventsFieldRepeat: String
+    val eventsFieldRepeatEnd: String
+    val eventsFieldOccurrences: String
     val eventsFieldReminder: String
     val eventsEmpty: String
     val eventsViewList: String
