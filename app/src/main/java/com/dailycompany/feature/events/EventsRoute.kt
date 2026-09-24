@@ -2,6 +2,7 @@ package com.dailycompany.feature.events
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,10 +24,19 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +51,7 @@ import com.dailycompany.ui.theme.AppStrings
 import com.dailycompany.ui.theme.LocalAppLocale
 import com.dailycompany.ui.theme.Spacing
 import com.dailycompany.ui.theme.strings
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -74,6 +85,22 @@ fun EventsScreen(
 ) {
     val s = strings()
     val uiState by viewModel.uiState.collectAsState()
+    val today = viewModel.today
+    val minMonth = YearMonth.from(today)
+    val maxMonth = YearMonth.from(today.plusMonths(EventsViewModel.WINDOW_MONTHS))
+
+    // Estado local do ecrã (sobrevive à rotação): vista, mês visível, dia escolhido.
+    var viewName by rememberSaveable { mutableStateOf(AgendaView.LIST.name) }
+    var visibleMonthCode by rememberSaveable { mutableIntStateOf(monthCode(minMonth)) }
+    var selectedEpochDay by rememberSaveable { mutableLongStateOf(today.toEpochDay()) }
+
+    val view = AgendaView.valueOf(viewName)
+    val visibleMonth = remember(visibleMonthCode) {
+        YearMonth.of(visibleMonthCode / 12, (visibleMonthCode % 12) + 1)
+    }
+    val selectedDay = remember(selectedEpochDay) {
+        if (selectedEpochDay < 0L) null else LocalDate.ofEpochDay(selectedEpochDay)
+    }
 
     Scaffold(
         topBar = {
@@ -96,28 +123,127 @@ fun EventsScreen(
             )
         },
     ) { innerPadding ->
-        when {
-            uiState.isLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(Spacing.lg),
-                )
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+        ) {
+            ViewToggle(
+                view = view,
+                onViewChange = { viewName = it.name },
+            )
+            when {
+                uiState.isLoading -> {
+                    Box(Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    }
+                }
+                uiState.occurrences.isEmpty() -> {
+                    EmptyState(
+                        icon = Icons.Outlined.CalendarMonth,
+                        message = s.eventsEmpty,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                view == AgendaView.LIST -> {
+                    EventsList(
+                        occurrences = uiState.occurrences,
+                        onOpenEvent = onOpenEvent,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                else -> {
+                    CalendarContent(
+                        visibleMonth = visibleMonth,
+                        minMonth = minMonth,
+                        maxMonth = maxMonth,
+                        markedDays = remember(uiState.occurrences) { uiState.occurrences.map { it.date }.toSet() },
+                        selectedDay = selectedDay,
+                        today = today,
+                        occurrences = uiState.occurrences,
+                        onMonthChange = { month ->
+                            visibleMonthCode = monthCode(month)
+                            selectedEpochDay = -1L
+                        },
+                        onSelectDay = { selectedEpochDay = it.toEpochDay() },
+                        onOpenEvent = onOpenEvent,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
-            uiState.occurrences.isEmpty() -> {
-                EmptyState(
-                    icon = Icons.Outlined.CalendarMonth,
-                    message = s.eventsEmpty,
-                    modifier = Modifier.padding(innerPadding),
-                )
-            }
-            else -> {
-                EventsList(
-                    occurrences = uiState.occurrences,
-                    onOpenEvent = onOpenEvent,
-                    modifier = Modifier.padding(innerPadding),
-                )
-            }
+        }
+    }
+}
+
+/** Alternador Lista / Calendário da Agenda (SCREENS.md §4). */
+@Composable
+private fun ViewToggle(
+    view: AgendaView,
+    onViewChange: (AgendaView) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val s = strings()
+    SingleChoiceSegmentedButtonRow(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.screenH, vertical = Spacing.xs),
+    ) {
+        SegmentedButton(
+            selected = view == AgendaView.LIST,
+            onClick = { onViewChange(AgendaView.LIST) },
+            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+        ) {
+            Text(s.eventsViewList)
+        }
+        SegmentedButton(
+            selected = view == AgendaView.CALENDAR,
+            onClick = { onViewChange(AgendaView.CALENDAR) },
+            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+        ) {
+            Text(s.eventsViewCalendar)
+        }
+    }
+}
+
+/** Calendário mensal + lista do dia escolhido (mantém os dois na mesma vista). */
+@Composable
+private fun CalendarContent(
+    visibleMonth: YearMonth,
+    minMonth: YearMonth,
+    maxMonth: YearMonth,
+    markedDays: Set<LocalDate>,
+    selectedDay: LocalDate?,
+    today: LocalDate,
+    occurrences: List<EventOccurrence>,
+    onMonthChange: (YearMonth) -> Unit,
+    onSelectDay: (LocalDate) -> Unit,
+    onOpenEvent: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = Spacing.screenH, vertical = Spacing.xs),
+    ) {
+        MonthCalendar(
+            visibleMonth = visibleMonth,
+            markedDays = markedDays,
+            selectedDay = selectedDay,
+            today = today,
+            canGoPrev = visibleMonth > minMonth,
+            canGoNext = visibleMonth < maxMonth,
+            onGoPrev = { onMonthChange(visibleMonth.minusMonths(1)) },
+            onGoNext = { onMonthChange(visibleMonth.plusMonths(1)) },
+            onSelectDay = onSelectDay,
+        )
+        HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.sm))
+        if (selectedDay != null) {
+            DayEvents(
+                day = selectedDay,
+                occurrences = occurrences.filter { it.date == selectedDay },
+                onOpenEvent = onOpenEvent,
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
         }
     }
 }
@@ -171,7 +297,7 @@ internal fun groupByMonth(occurrences: List<EventOccurrence>): List<Pair<YearMon
 
 /** Linha de evento: dia grande + título + hora/dia inteiro + repetição/aniversário. */
 @Composable
-private fun EventRow(
+internal fun EventRow(
     occurrence: EventOccurrence,
     onOpen: () -> Unit,
 ) {
@@ -262,7 +388,9 @@ private fun EventOccurrence.birthdayLabel(s: AppStrings): String? {
     return if (years > 0) s.eventTurnsYears(years) else null
 }
 
-@Composable
-private fun YearMonth.header(locale: Locale): String =
+internal fun YearMonth.header(locale: Locale): String =
     format(DateTimeFormatter.ofPattern("MMMM yyyy", locale))
         .replaceFirstChar { it.uppercase(locale) }
+
+/** Codifica um mês num Int estável para `rememberSaveable` (ano*12 + mês-1). */
+private fun monthCode(month: YearMonth): Int = month.year * 12 + (month.monthValue - 1)
