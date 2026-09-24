@@ -1,8 +1,9 @@
 package com.dailycompany.data.local.alarm
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 /** Acesso a `alarms`. A UI nunca fala com DAOs (regra AGENTS: através do repositório). */
@@ -22,8 +23,13 @@ interface AlarmDao {
     @Query("SELECT * FROM alarms WHERE enabled = 1")
     suspend fun getEnabled(): List<AlarmEntity>
 
-    /** Insere ou atualiza; devolve o id (novo se o alarme ainda não tinha). */
-    @Upsert
+    /**
+     * Insere ou substitui; devolve o id (novo se o alarme ainda não tinha).
+     * `@Insert(REPLACE)` em vez de `@Upsert`: este auto-gera o id quando é 0
+     * (novos alarmes) — `@Upsert` inseriria a literal 0 e os novos alarmes
+     * sobrescreviam-se todos na mesma linha.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(alarm: AlarmEntity): Long
 
     @Query("UPDATE alarms SET enabled = :enabled WHERE id = :id")
