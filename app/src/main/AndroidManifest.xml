@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Alarmes de relógio precisam de alarmes exatos mesmo via setAlarmClock
+         (Android 14+ lança SecurityException sem esta permissão).
+         Auto-concedida na instalação; o Play restringe-a a apps de alarme/relógio. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
     <application
         android:name=".DailyApp"
         android:allowBackup="true"

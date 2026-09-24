@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.domain.model.Alarm
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,11 +30,20 @@ class AlarmScheduler @Inject constructor(
 ) {
     private val alarmManager: AlarmManager = context.getSystemService(AlarmManager::class.java)
 
-    /** Agenda o toque principal de [alarm] para [at] (converte para millis no fuso atual). */
-    @SuppressLint("MissingPermission") // setAlarmClock está isento de SCHEDULE_EXACT_ALARM (uso de relógio, Android 12+).
-    fun schedule(alarm: Alarm, at: LocalDateTime) {
-        val info = AlarmManager.AlarmClockInfo(at.atZone(clock.zone()).toInstant().toEpochMilli(), null)
-        alarmManager.setAlarmClock(info, alarmPendingIntent(alarm.id))
+    /**
+     * Agenda o toque principal de [alarm] para [at]. Devolve `true` se ficou
+     * agendado. Nunca lança: se a permissão de alarmes exatos estiver revogada
+     * (raro: `USE_EXACT_ALARM` é auto-concedida na instalação), devolve `false`
+     * — o ecrã de ajuda explica como recuperar. Um crash silencioso aqui
+     * matava a app no meio do `save()` (visto no emulador, API 37).
+     */
+    @SuppressLint("MissingPermission") // setAlarmClock exige USE_EXACT_ALARM (declarada no manifest; Android 14+).
+    fun schedule(alarm: Alarm, at: LocalDateTime): Boolean {
+        if (!canScheduleExactAlarms()) return false
+        return runCatching {
+            val info = AlarmManager.AlarmClockInfo(at.atZone(clock.zone()).toInstant().toEpochMilli(), null)
+            alarmManager.setAlarmClock(info, alarmPendingIntent(alarm.id))
+        }.isSuccess
     }
 
     /** Cancela o toque principal de um alarme (não mexe num snooze já pendente). */
@@ -42,11 +52,18 @@ class AlarmScheduler @Inject constructor(
     }
 
     /** Agenda um toque extra único (snooze manual ou automático). */
-    @SuppressLint("MissingPermission") // idem: isenção de setAlarmClock para alarmes de relógio.
-    fun scheduleSnooze(alarmId: Long, at: LocalDateTime) {
-        val info = AlarmManager.AlarmClockInfo(at.atZone(clock.zone()).toInstant().toEpochMilli(), null)
-        alarmManager.setAlarmClock(info, snoozePendingIntent(alarmId))
+    @SuppressLint("MissingPermission") // idem: setAlarmClock exige USE_EXACT_ALARM (declarada no manifest).
+    fun scheduleSnooze(alarmId: Long, at: LocalDateTime): Boolean {
+        if (!canScheduleExactAlarms()) return false
+        return runCatching {
+            val info = AlarmManager.AlarmClockInfo(at.atZone(clock.zone()).toInstant().toEpochMilli(), null)
+            alarmManager.setAlarmClock(info, snoozePendingIntent(alarmId))
+        }.isSuccess
     }
+
+    /** Com `USE_EXACT_ALARM` concedida, `canScheduleExactAlarms()` é sempre `true` (API 31+). */
+    private fun canScheduleExactAlarms(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
 
     private fun alarmPendingIntent(alarmId: Long): PendingIntent = PendingIntent.getBroadcast(
         context,
