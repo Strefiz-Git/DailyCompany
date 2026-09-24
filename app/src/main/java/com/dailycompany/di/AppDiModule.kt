@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.dailycompany.core.time.AppClock
 import com.dailycompany.core.time.SystemClock
 import com.dailycompany.data.local.AppDatabase
+import com.dailycompany.data.local.alarm.AlarmDao
 import com.dailycompany.data.local.event.EventDao
 import com.dailycompany.data.local.task.TaskDao
 import dagger.Module
@@ -34,13 +35,21 @@ object AppDiModule {
             context,
             AppDatabase::class.java,
             "dailycompany.db",
-        ).addMigrations(AppDatabase.MIGRATION_1_2, AppDatabase.MIGRATION_2_3).build()
+        ).addMigrations(
+            AppDatabase.MIGRATION_1_2,
+            AppDatabase.MIGRATION_2_3,
+            AppDatabase.MIGRATION_3_4,
+            AppDatabase.MIGRATION_4_5,
+        ).build()
 
     @Provides
     fun provideTaskDao(database: AppDatabase): TaskDao = database.taskDao()
 
     @Provides
     fun provideEventDao(database: AppDatabase): EventDao = database.eventDao()
+
+    @Provides
+    fun provideAlarmDao(database: AppDatabase): AlarmDao = database.alarmDao()
 
     // ---- Relógio (regra: injetado, nunca System.currentTimeMillis() na UI) ----
     @Provides

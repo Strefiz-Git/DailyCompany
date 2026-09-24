@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.dailycompany.data.local.alarm.AlarmDao
+import com.dailycompany.data.local.alarm.AlarmEntity
 import com.dailycompany.data.local.event.EventDao
 import com.dailycompany.data.local.event.EventEntity
 import com.dailycompany.data.local.event.EventExceptionDao
@@ -14,13 +16,14 @@ import com.dailycompany.data.local.task.TaskDao
 import com.dailycompany.data.local.task.TaskEntity
 
 /**
- * Base de dados Room da app — tabelas `tasks`, `events` e `event_exceptions`.
+ * Base de dados Room da app — tabelas `tasks`, `events`, `event_exceptions`
+ * e, desde a v5, `alarms`.
  * O schema é exportado para `app/schemas` (regra: nunca commitar por cima,
- * versionar os `1.json`, `2.json`, `3.json` e agora `4.json`).
+ * versionar os `1.json`…`5.json`).
  *
  * ```json
- * entities = [TaskEntity, EventEntity, EventExceptionEntity]
- * version  = 4
+ * entities = [TaskEntity, EventEntity, EventExceptionEntity, AlarmEntity]
+ * version  = 5
  * ```
  *
  * Regra do projeto **R6 (inviolável)**: a ocorrência **nunca é gravada** — só
@@ -28,8 +31,13 @@ import com.dailycompany.data.local.task.TaskEntity
  * `recurrence` serializada (convenção `TaskEntity.repeat`/`TaskIcon.serialize`).
  */
 @Database(
-    entities = [TaskEntity::class, EventEntity::class, EventExceptionEntity::class],
-    version = 4,
+    entities = [
+        TaskEntity::class,
+        EventEntity::class,
+        EventExceptionEntity::class,
+        AlarmEntity::class,
+    ],
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(TaskConverters::class)
@@ -38,6 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
     abstract fun eventDao(): EventDao
     abstract fun eventExceptionDao(): EventExceptionDao
+    abstract fun alarmDao(): AlarmDao
 
     companion object {
         /** v1 → v2: adiciona a coluna `icon` (ícone/emoji da tarefa). */
@@ -87,6 +96,32 @@ abstract class AppDatabase : RoomDatabase() {
                         `is_cancelled` INTEGER NOT NULL,
                         `override_date` TEXT,
                         `override_time` TEXT
+                    )
+                    """.trimIndent(),
+                )
+            }
+        }
+
+        /**
+         * v4 → v5: cria a tabela `alarms` (Passo 1 da Fase 3 — Lembretes e
+         * alarmes). Dias da semana numa coluna serializada (`|` entre nomes,
+         * vazio = toca uma vez); `time` como `LocalTime` (texto `HH:mm`).
+         */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `alarms` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `uid` TEXT NOT NULL,
+                        `time` TEXT NOT NULL,
+                        `repeat_days` TEXT NOT NULL,
+                        `label` TEXT NOT NULL,
+                        `sound_enabled` INTEGER NOT NULL,
+                        `vibrate_enabled` INTEGER NOT NULL,
+                        `auto_snooze_minutes` INTEGER NOT NULL,
+                        `enabled` INTEGER NOT NULL,
+                        `created_at` INTEGER NOT NULL
                     )
                     """.trimIndent(),
                 )

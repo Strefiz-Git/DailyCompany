@@ -1,6 +1,8 @@
 package com.dailycompany.di
 
+import com.dailycompany.data.repository.AlarmRepository
 import com.dailycompany.data.repository.EventRepository
+import com.dailycompany.data.repository.RoomAlarmRepository
 import com.dailycompany.data.repository.RoomEventRepository
 import com.dailycompany.data.repository.RoomTaskRepository
 import com.dailycompany.data.repository.TaskRepository
@@ -22,4 +24,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindEventRepository(impl: RoomEventRepository): EventRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAlarmRepository(impl: RoomAlarmRepository): AlarmRepository
 }
