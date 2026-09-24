@@ -24,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.dailycompany.feature.events.EventEditRoute
 import com.dailycompany.feature.events.EventsRoute
 import com.dailycompany.feature.outfits.OutfitsRoute
 import com.dailycompany.feature.settings.SettingsRoute
@@ -38,6 +39,7 @@ object Routes {
     const val TASKS = "tasks"
     const val TASK_EDIT = "task_edit?taskId={taskId}"
     const val EVENTS = "events"
+    const val EVENT_EDIT = "event_edit?eventId={eventId}"
     const val WARDROBE = "wardrobe"
     const val OUTFITS = "outfits"
     const val SETTINGS = "settings"
@@ -130,7 +132,22 @@ fun DailyCompanyApp() {
                 TaskEditRoute(onBack = { navController.navigateUp() })
             }
             composable(Routes.EVENTS) {
-                EventsRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
+                EventsRoute(
+                    onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
+                    onCreateEvent = { navController.navigate("event_edit") },
+                    onOpenEvent = { eventId -> navController.navigate("event_edit?eventId=$eventId") },
+                )
+            }
+            composable(
+                route = Routes.EVENT_EDIT,
+                arguments = listOf(
+                    navArgument("eventId") {
+                        type = NavType.LongType
+                        defaultValue = 0L
+                    },
+                ),
+            ) {
+                EventEditRoute(onBack = { navController.navigateUp() })
             }
             composable(Routes.WARDROBE) {
                 WardrobeRoute(onNavigateToSettings = { navController.navigate(Routes.SETTINGS) })
